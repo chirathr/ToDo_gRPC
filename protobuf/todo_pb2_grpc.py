@@ -17,42 +17,27 @@ class TodoServiceStub(object):
     self.AddUser = channel.unary_unary(
         '/protobuf.TodoService/AddUser',
         request_serializer=todo__pb2.User.SerializeToString,
-        response_deserializer=todo__pb2.UserRequest.FromString,
-        )
-    self.DeleteUser = channel.unary_unary(
-        '/protobuf.TodoService/DeleteUser',
-        request_serializer=todo__pb2.UserRequest.SerializeToString,
-        response_deserializer=todo__pb2.UserRequest.FromString,
+        response_deserializer=todo__pb2.User.FromString,
         )
     self.AddTodo = channel.unary_unary(
         '/protobuf.TodoService/AddTodo',
         request_serializer=todo__pb2.ToDo.SerializeToString,
-        response_deserializer=todo__pb2.ToDoRequest.FromString,
-        )
-    self.GetToDo = channel.unary_unary(
-        '/protobuf.TodoService/GetToDo',
-        request_serializer=todo__pb2.ToDoRequest.SerializeToString,
         response_deserializer=todo__pb2.ToDo.FromString,
         )
-    self.SetDoneToDo = channel.unary_unary(
-        '/protobuf.TodoService/SetDoneToDo',
-        request_serializer=todo__pb2.ToDoRequest.SerializeToString,
-        response_deserializer=todo__pb2.ToDoRequest.FromString,
-        )
-    self.DeleteToDo = channel.unary_unary(
-        '/protobuf.TodoService/DeleteToDo',
-        request_serializer=todo__pb2.ToDoRequest.SerializeToString,
-        response_deserializer=todo__pb2.ToDoRequest.FromString,
+    self.UpdateTodo = channel.unary_unary(
+        '/protobuf.TodoService/UpdateTodo',
+        request_serializer=todo__pb2.ToDo.SerializeToString,
+        response_deserializer=todo__pb2.ToDo.FromString,
         )
     self.GetToDos = channel.unary_stream(
         '/protobuf.TodoService/GetToDos',
-        request_serializer=todo__pb2.UserRequest.SerializeToString,
+        request_serializer=todo__pb2.User.SerializeToString,
         response_deserializer=todo__pb2.ToDo.FromString,
         )
     self.DeleteToDos = channel.unary_stream(
         '/protobuf.TodoService/DeleteToDos',
-        request_serializer=todo__pb2.UserRequest.SerializeToString,
-        response_deserializer=todo__pb2.ToDoRequest.FromString,
+        request_serializer=todo__pb2.User.SerializeToString,
+        response_deserializer=todo__pb2.ToDo.FromString,
         )
 
 
@@ -67,13 +52,6 @@ class TodoServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def DeleteUser(self, request, context):
-    """Delete a user
-    """
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
   def AddTodo(self, request, context):
     """Add, Get, Delete and Set Todo as Complete
     """
@@ -81,21 +59,7 @@ class TodoServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def GetToDo(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def SetDoneToDo(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def DeleteToDo(self, request, context):
+  def UpdateTodo(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -122,42 +86,27 @@ def add_TodoServiceServicer_to_server(servicer, server):
       'AddUser': grpc.unary_unary_rpc_method_handler(
           servicer.AddUser,
           request_deserializer=todo__pb2.User.FromString,
-          response_serializer=todo__pb2.UserRequest.SerializeToString,
-      ),
-      'DeleteUser': grpc.unary_unary_rpc_method_handler(
-          servicer.DeleteUser,
-          request_deserializer=todo__pb2.UserRequest.FromString,
-          response_serializer=todo__pb2.UserRequest.SerializeToString,
+          response_serializer=todo__pb2.User.SerializeToString,
       ),
       'AddTodo': grpc.unary_unary_rpc_method_handler(
           servicer.AddTodo,
           request_deserializer=todo__pb2.ToDo.FromString,
-          response_serializer=todo__pb2.ToDoRequest.SerializeToString,
-      ),
-      'GetToDo': grpc.unary_unary_rpc_method_handler(
-          servicer.GetToDo,
-          request_deserializer=todo__pb2.ToDoRequest.FromString,
           response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
-      'SetDoneToDo': grpc.unary_unary_rpc_method_handler(
-          servicer.SetDoneToDo,
-          request_deserializer=todo__pb2.ToDoRequest.FromString,
-          response_serializer=todo__pb2.ToDoRequest.SerializeToString,
-      ),
-      'DeleteToDo': grpc.unary_unary_rpc_method_handler(
-          servicer.DeleteToDo,
-          request_deserializer=todo__pb2.ToDoRequest.FromString,
-          response_serializer=todo__pb2.ToDoRequest.SerializeToString,
+      'UpdateTodo': grpc.unary_unary_rpc_method_handler(
+          servicer.UpdateTodo,
+          request_deserializer=todo__pb2.ToDo.FromString,
+          response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
       'GetToDos': grpc.unary_stream_rpc_method_handler(
           servicer.GetToDos,
-          request_deserializer=todo__pb2.UserRequest.FromString,
+          request_deserializer=todo__pb2.User.FromString,
           response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
       'DeleteToDos': grpc.unary_stream_rpc_method_handler(
           servicer.DeleteToDos,
-          request_deserializer=todo__pb2.UserRequest.FromString,
-          response_serializer=todo__pb2.ToDoRequest.SerializeToString,
+          request_deserializer=todo__pb2.User.FromString,
+          response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='protobuf',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"\x19\n\x0bUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"B\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\"\x19\n\x0bToDoRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x32\xdc\x03\n\x0bTodoService\x12\x32\n\x07\x41\x64\x64User\x12\x0e.protobuf.User\x1a\x15.protobuf.UserRequest\"\x00\x12<\n\nDeleteUser\x12\x15.protobuf.UserRequest\x1a\x15.protobuf.UserRequest\"\x00\x12\x32\n\x07\x41\x64\x64Todo\x12\x0e.protobuf.ToDo\x1a\x15.protobuf.ToDoRequest\"\x00\x12\x32\n\x07GetToDo\x12\x15.protobuf.ToDoRequest\x1a\x0e.protobuf.ToDo\"\x00\x12=\n\x0bSetDoneToDo\x12\x15.protobuf.ToDoRequest\x1a\x15.protobuf.ToDoRequest\"\x00\x12<\n\nDeleteToDo\x12\x15.protobuf.ToDoRequest\x1a\x15.protobuf.ToDoRequest\"\x00\x12\x35\n\x08GetToDos\x12\x15.protobuf.UserRequest\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x12?\n\x0b\x44\x65leteToDos\x12\x15.protobuf.UserRequest\x1a\x15.protobuf.ToDoRequest\"\x00\x30\x01\x62\x06proto3')
+  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"O\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x1c\n\x04user\x18\x02 \x01(\x0b\x32\x0e.protobuf.User\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\x32\xfa\x01\n\x0bTodoService\x12+\n\x07\x41\x64\x64User\x12\x0e.protobuf.User\x1a\x0e.protobuf.User\"\x00\x12+\n\x07\x41\x64\x64Todo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12.\n\nUpdateTodo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12.\n\x08GetToDos\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x12\x31\n\x0b\x44\x65leteToDos\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x62\x06proto3')
 )
 
 
@@ -63,37 +63,6 @@ _USER = _descriptor.Descriptor(
 )
 
 
-_USERREQUEST = _descriptor.Descriptor(
-  name='UserRequest',
-  full_name='protobuf.UserRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='id', full_name='protobuf.UserRequest.id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=58,
-  serialized_end=83,
-)
-
-
 _TODO = _descriptor.Descriptor(
   name='ToDo',
   full_name='protobuf.ToDo',
@@ -109,9 +78,9 @@ _TODO = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='user_id', full_name='protobuf.ToDo.user_id', index=1,
-      number=2, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='user', full_name='protobuf.ToDo.user', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -141,45 +110,13 @@ _TODO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=85,
-  serialized_end=151,
+  serialized_start=58,
+  serialized_end=137,
 )
 
-
-_TODOREQUEST = _descriptor.Descriptor(
-  name='ToDoRequest',
-  full_name='protobuf.ToDoRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='id', full_name='protobuf.ToDoRequest.id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=153,
-  serialized_end=178,
-)
-
+_TODO.fields_by_name['user'].message_type = _USER
 DESCRIPTOR.message_types_by_name['User'] = _USER
-DESCRIPTOR.message_types_by_name['UserRequest'] = _USERREQUEST
 DESCRIPTOR.message_types_by_name['ToDo'] = _TODO
-DESCRIPTOR.message_types_by_name['ToDoRequest'] = _TODOREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 User = _reflection.GeneratedProtocolMessageType('User', (_message.Message,), dict(
@@ -189,26 +126,12 @@ User = _reflection.GeneratedProtocolMessageType('User', (_message.Message,), dic
   ))
 _sym_db.RegisterMessage(User)
 
-UserRequest = _reflection.GeneratedProtocolMessageType('UserRequest', (_message.Message,), dict(
-  DESCRIPTOR = _USERREQUEST,
-  __module__ = 'todo_pb2'
-  # @@protoc_insertion_point(class_scope:protobuf.UserRequest)
-  ))
-_sym_db.RegisterMessage(UserRequest)
-
 ToDo = _reflection.GeneratedProtocolMessageType('ToDo', (_message.Message,), dict(
   DESCRIPTOR = _TODO,
   __module__ = 'todo_pb2'
   # @@protoc_insertion_point(class_scope:protobuf.ToDo)
   ))
 _sym_db.RegisterMessage(ToDo)
-
-ToDoRequest = _reflection.GeneratedProtocolMessageType('ToDoRequest', (_message.Message,), dict(
-  DESCRIPTOR = _TODOREQUEST,
-  __module__ = 'todo_pb2'
-  # @@protoc_insertion_point(class_scope:protobuf.ToDoRequest)
-  ))
-_sym_db.RegisterMessage(ToDoRequest)
 
 
 
@@ -218,8 +141,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=181,
-  serialized_end=657,
+  serialized_start=140,
+  serialized_end=390,
   methods=[
   _descriptor.MethodDescriptor(
     name='AddUser',
@@ -227,70 +150,43 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_USER,
-    output_type=_USERREQUEST,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='DeleteUser',
-    full_name='protobuf.TodoService.DeleteUser',
-    index=1,
-    containing_service=None,
-    input_type=_USERREQUEST,
-    output_type=_USERREQUEST,
+    output_type=_USER,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='AddTodo',
     full_name='protobuf.TodoService.AddTodo',
-    index=2,
+    index=1,
     containing_service=None,
     input_type=_TODO,
-    output_type=_TODOREQUEST,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='GetToDo',
-    full_name='protobuf.TodoService.GetToDo',
-    index=3,
-    containing_service=None,
-    input_type=_TODOREQUEST,
     output_type=_TODO,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='SetDoneToDo',
-    full_name='protobuf.TodoService.SetDoneToDo',
-    index=4,
+    name='UpdateTodo',
+    full_name='protobuf.TodoService.UpdateTodo',
+    index=2,
     containing_service=None,
-    input_type=_TODOREQUEST,
-    output_type=_TODOREQUEST,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='DeleteToDo',
-    full_name='protobuf.TodoService.DeleteToDo',
-    index=5,
-    containing_service=None,
-    input_type=_TODOREQUEST,
-    output_type=_TODOREQUEST,
+    input_type=_TODO,
+    output_type=_TODO,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='GetToDos',
     full_name='protobuf.TodoService.GetToDos',
-    index=6,
+    index=3,
     containing_service=None,
-    input_type=_USERREQUEST,
+    input_type=_USER,
     output_type=_TODO,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='DeleteToDos',
     full_name='protobuf.TodoService.DeleteToDos',
-    index=7,
+    index=4,
     containing_service=None,
-    input_type=_USERREQUEST,
-    output_type=_TODOREQUEST,
+    input_type=_USER,
+    output_type=_TODO,
     serialized_options=None,
   ),
 ])
