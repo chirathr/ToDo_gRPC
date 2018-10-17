@@ -6,7 +6,7 @@ service TodoService {
   // Add a user
   rpc AddUser(User) returns (User) {}
 
-  // Add, Get, Delete and Set Todo as Complete
+  // Add, update ToDo
   rpc AddTodo(ToDo) returns (ToDo) {}
   rpc UpdateTodo(ToDo) returns (ToDo) {}
 
