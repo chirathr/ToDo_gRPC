@@ -73,6 +73,7 @@ class Client:
 
         response_todo = self.stub.update_todo(todo)
         if response_todo.id == 0:
+            self.load_todo_list()
             return True
         return False
 

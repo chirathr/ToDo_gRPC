@@ -78,15 +78,20 @@ class ToDoDb:
         if not isinstance(todo, ToDo):
             raise AttributeError('todo should be an instance of protobuf.todo_pb2.ToDo')
 
+        print("User: " + str(todo.user))
+
         if not todo.user:
-            delete_todo_sql = ''''''
+            delete_todo_sql = '''delete from todo where id = {id};'''.format(id=todo.id)
+            self.cursor.execute(delete_todo_sql)
+            todo.id = 0
 
         if todo.is_done:
             update_todo_is_done = '''
                 update todo set is_done = {is_done} where id = {id}
             '''.format(id=todo.id, is_done=1 if todo.is_done else 0)
             self.cursor.execute(update_todo_is_done)
-            self.conn.commit()
+
+        self.conn.commit()
         return todo
 
     def get_todo_list(self, user):

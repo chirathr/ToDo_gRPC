@@ -10,7 +10,7 @@ service TodoService {
   rpc add_todo(ToDo) returns (ToDo) {}
   rpc update_todo(ToDo) returns (ToDo) {}
 
-  // Get or Delete list of Todos
+  // Get or Delete list of ToDo
   rpc get_todo_list(User) returns (stream ToDo) {}
   rpc delete_todo_list(User) returns (stream ToDo) {}
 }
