@@ -4,7 +4,7 @@ from protobuf.todo_pb2 import ToDo
 class TextFormat:
     _escape_code_format_str = '\x1b[{text_format};{text_color};{background_color}m'
     _escape_code_end = '\x1b[0m'
-    _string_format = '{escape_code_style}{text:50s}{escape_code_end}'
+    _string_format = '{escape_code_style}{text}{escape_code_end}'
 
     # Text formating
     _BOLD = 1
