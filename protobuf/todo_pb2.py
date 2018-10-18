@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='protobuf',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"O\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x1c\n\x04user\x18\x02 \x01(\x0b\x32\x0e.protobuf.User\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\x32\xfa\x01\n\x0bTodoService\x12+\n\x07\x41\x64\x64User\x12\x0e.protobuf.User\x1a\x0e.protobuf.User\"\x00\x12+\n\x07\x41\x64\x64Todo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12.\n\nUpdateTodo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12.\n\x08GetToDos\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x12\x31\n\x0b\x44\x65leteToDos\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x62\x06proto3')
+  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"O\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x1c\n\x04user\x18\x02 \x01(\x0b\x32\x0e.protobuf.User\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\x32\x87\x02\n\x0bTodoService\x12,\n\x08\x61\x64\x64_user\x12\x0e.protobuf.User\x1a\x0e.protobuf.User\"\x00\x12,\n\x08\x61\x64\x64_todo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12/\n\x0bupdate_todo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12\x33\n\rget_todo_list\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x12\x36\n\x10\x64\x65lete_todo_list\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x62\x06proto3')
 )
 
 
@@ -142,11 +142,11 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=140,
-  serialized_end=390,
+  serialized_end=403,
   methods=[
   _descriptor.MethodDescriptor(
-    name='AddUser',
-    full_name='protobuf.TodoService.AddUser',
+    name='add_user',
+    full_name='protobuf.TodoService.add_user',
     index=0,
     containing_service=None,
     input_type=_USER,
@@ -154,8 +154,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='AddTodo',
-    full_name='protobuf.TodoService.AddTodo',
+    name='add_todo',
+    full_name='protobuf.TodoService.add_todo',
     index=1,
     containing_service=None,
     input_type=_TODO,
@@ -163,8 +163,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='UpdateTodo',
-    full_name='protobuf.TodoService.UpdateTodo',
+    name='update_todo',
+    full_name='protobuf.TodoService.update_todo',
     index=2,
     containing_service=None,
     input_type=_TODO,
@@ -172,8 +172,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='GetToDos',
-    full_name='protobuf.TodoService.GetToDos',
+    name='get_todo_list',
+    full_name='protobuf.TodoService.get_todo_list',
     index=3,
     containing_service=None,
     input_type=_USER,
@@ -181,8 +181,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='DeleteToDos',
-    full_name='protobuf.TodoService.DeleteToDos',
+    name='delete_todo_list',
+    full_name='protobuf.TodoService.delete_todo_list',
     index=4,
     containing_service=None,
     input_type=_USER,

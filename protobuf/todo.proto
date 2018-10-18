@@ -4,15 +4,15 @@ package protobuf;
 
 service TodoService {
   // Add a user
-  rpc AddUser(User) returns (User) {}
+  rpc add_user(User) returns (User) {}
 
   // Add, update ToDo
-  rpc AddTodo(ToDo) returns (ToDo) {}
-  rpc UpdateTodo(ToDo) returns (ToDo) {}
+  rpc add_todo(ToDo) returns (ToDo) {}
+  rpc update_todo(ToDo) returns (ToDo) {}
 
   // Get or Delete list of Todos
-  rpc GetToDos(User) returns (stream ToDo) {}
-  rpc DeleteToDos(User) returns (stream ToDo) {}
+  rpc get_todo_list(User) returns (stream ToDo) {}
+  rpc delete_todo_list(User) returns (stream ToDo) {}
 }
 
 message User {
