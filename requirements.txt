@@ -1,0 +1,8 @@
+google
+protobuf
+grpcio-tools
+googleapis-common-protos
+pytest-cov
+pytest
+flake8
+coverage
