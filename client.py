@@ -7,18 +7,20 @@ from client.text_format import TextFormat
 
 class Client:
 
-    user = None
-
-    def __init__(self):
+    def __init__(self, stub=None, user=None):
         self.channel = grpc.insecure_channel('localhost:50001')
-        self.stub = todo_pb2_grpc.TodoServiceStub(channel=self.channel)
+        self.stub = stub or todo_pb2_grpc.TodoServiceStub(channel=self.channel)
         self.todo_list = []
+        if isinstance(user, User):
+            self.user = user
+        else:
+            self.user = None
 
     def __del__(self):
         self.channel.close()
 
-    def load_user(self):
-        name = input("Hi, Please enter name to continue: ")
+    def load_user(self, user_name=None):
+        name = user_name or input("Hi, Please enter name to continue: ")
         user = User(name=str(name))
         response_user = self.stub.add_user(user)
         if response_user.id != 0:
@@ -26,10 +28,10 @@ class Client:
             return True
         return False
 
-    def add_todo(self):
+    def add_todo(self, todo_text=None):
         if not self.user:
             self.load_user()
-        todo_text = input("Enter a todo: ")
+        todo_text = todo_text or input("Enter a todo: ")
         todo = ToDo(user=self.user, text=todo_text)
         response_todo = self.stub.add_todo(todo)
         if response_todo.id != 0:
@@ -48,9 +50,12 @@ class Client:
             return True
         return False
 
-    def mark_todo_as_done(self):
+    def mark_todo_as_done(self, todo_id=None):
+        if not isinstance(todo_id, int):
+            todo_id = None
+
         try:
-            todo_id = int(input('Enter todo number: '))
+            todo_id = todo_id or int(input('Enter todo number: '))
         except ValueError:
             print("Error: Wrong choice!")
             return self.mark_todo_as_done()
@@ -62,9 +67,12 @@ class Client:
             self.load_todo_list()
         return response_todo.is_done
 
-    def delete_todo(self):
+    def delete_todo(self, todo_id=None):
+        if not isinstance(todo_id, int):
+            todo_id = None
+
         try:
-            todo_id = int(input('Enter todo number: '))
+            todo_id = todo_id or int(input('Enter todo number: '))
         except ValueError:
             print("Error: Wrong choice!")
             return self.delete_todo()
@@ -105,11 +113,15 @@ class Client:
         print('#-----------------------------------------------------------#')
 
     @staticmethod
-    def get_user_selection():
+    def get_user_selection(option=None):
+
+        if not isinstance(option, int):
+            option = None
+
         print(' 1 -> Add    2 -> mark as done   3 -> delete todo    4-> Exit')
         print('#-----------------------------------------------------------#')
         try:
-            user_input = int(input('Enter your option: '))
+            user_input = option or int(input('Enter your option: '))
             if 1 > user_input > 4:
                 raise ValueError
             return user_input
