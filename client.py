@@ -90,18 +90,19 @@ class Client:
         return False
 
     def print_to_do_list(self):
-        if not self.todo_list:
-            return
-        print('#-----------------------------------------------------------#')
-        for todo in self.todo_list:
-            if not todo.is_done:
-                print(TextFormat.todo_text(todo))
-        print('#---------------------- Completed --------------------------#')
-        for todo in self.todo_list:
-            if todo.is_done:
-                print(TextFormat.todo_done_text(todo))
-        print('#-----------------------------------------------------------#')
 
+        print('#-----------------------------------------------------------#')
+        if not self.todo_list:
+            print(' Empty')
+        else:
+            for todo in self.todo_list:
+                if not todo.is_done:
+                    print(TextFormat.todo_text(todo))
+            print('#---------------------- Completed --------------------------#')
+            for todo in self.todo_list:
+                if todo.is_done:
+                    print(TextFormat.todo_done_text(todo))
+        print('#-----------------------------------------------------------#')
 
     @staticmethod
     def get_user_selection():

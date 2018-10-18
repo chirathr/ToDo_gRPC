@@ -19,3 +19,7 @@ Then run the client script in a new terminal.
 ```bash
 python client.py
 ```
+
+#### Screenshots
+
+![ToDo](images/todo.png)
