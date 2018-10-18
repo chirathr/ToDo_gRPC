@@ -1,3 +1,4 @@
+from protobuf.todo_pb2 import ToDo
 
 
 class TextFormat:
@@ -27,7 +28,7 @@ class TextFormat:
     @classmethod
     def green_check(cls):
         check = u'\u2713'
-        return cls.format_text(check, text_format=cls._BOLD, text_color=cls._TC_GREEN)
+        return '\x1b[1;32;m' + check + cls._escape_code_end
 
     @classmethod
     def format_text(cls, text, text_format=0, text_color=37, background_color=""):
@@ -44,10 +45,14 @@ class TextFormat:
         )
 
     @classmethod
-    def todo_text(cls, text):
-        return cls.format_text(text, text_format=cls._BOLD)
+    def todo_text(cls, todo):
+        if not isinstance(todo, ToDo):
+            raise ValueError("todo should be an instance of ToDo")
+        return " {0}. {1}".format(todo.id, cls.format_text(todo.text, text_format=cls._BOLD))
 
     @classmethod
-    def todo_done_text(cls, text):
-        text = cls.format_text(text, text_format=cls._FAINT)
-        return "{:<50}".format(text[:50]) + cls.green_check()
+    def todo_done_text(cls, todo):
+        if not isinstance(todo, ToDo):
+            raise ValueError("todo should be an instance of ToDo")
+        text = cls.format_text(todo.text, text_format=cls._FAINT)
+        return " {0}. {1:<63}".format(todo.id, text[:50]) + cls.green_check()
