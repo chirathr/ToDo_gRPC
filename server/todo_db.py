@@ -78,9 +78,7 @@ class ToDoDb:
         if not isinstance(todo, ToDo):
             raise AttributeError('todo should be an instance of protobuf.todo_pb2.ToDo')
 
-        print("User: " + str(todo.user))
-
-        if not todo.user:
+        if todo.user.id == 0:
             delete_todo_sql = '''delete from todo where id = {id};'''.format(id=todo.id)
             self.cursor.execute(delete_todo_sql)
             todo.id = 0
