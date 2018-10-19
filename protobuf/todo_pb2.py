@@ -3,6 +3,7 @@
 
 import sys
 _b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -19,9 +20,34 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='protobuf',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\" \n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\"O\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x1c\n\x04user\x18\x02 \x01(\x0b\x32\x0e.protobuf.User\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\x32\x87\x02\n\x0bTodoService\x12,\n\x08\x61\x64\x64_user\x12\x0e.protobuf.User\x1a\x0e.protobuf.User\"\x00\x12,\n\x08\x61\x64\x64_todo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12/\n\x0bupdate_todo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12\x33\n\rget_todo_list\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x12\x36\n\x10\x64\x65lete_todo_list\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x62\x06proto3')
+  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\"F\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12$\n\x06status\x18\x03 \x01(\x0e\x32\x14.protobuf.StatusType\"u\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x1c\n\x04user\x18\x02 \x01(\x0b\x32\x0e.protobuf.User\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\x12$\n\x06status\x18\x05 \x01(\x0e\x32\x14.protobuf.StatusType*%\n\nStatusType\x12\x0b\n\x07SUCCESS\x10\x00\x12\n\n\x06\x46\x41ILED\x10\x01\x32\x80\x02\n\x0bTodoService\x12+\n\x07\x41\x64\x64User\x12\x0e.protobuf.User\x1a\x0e.protobuf.User\"\x00\x12+\n\x07\x41\x64\x64ToDo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12.\n\nUpdateToDo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12\x31\n\x0bGetToDoList\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x12\x34\n\x0e\x44\x65leteToDoList\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x62\x06proto3')
 )
 
+_STATUSTYPE = _descriptor.EnumDescriptor(
+  name='StatusType',
+  full_name='protobuf.StatusType',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='SUCCESS', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='FAILED', index=1, number=1,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=215,
+  serialized_end=252,
+)
+_sym_db.RegisterEnumDescriptor(_STATUSTYPE)
+
+StatusType = enum_type_wrapper.EnumTypeWrapper(_STATUSTYPE)
+SUCCESS = 0
+FAILED = 1
 
 
 
@@ -46,6 +72,13 @@ _USER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='status', full_name='protobuf.User.status', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -59,7 +92,7 @@ _USER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=24,
-  serialized_end=56,
+  serialized_end=94,
 )
 
 
@@ -98,6 +131,13 @@ _TODO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='status', full_name='protobuf.ToDo.status', index=4,
+      number=5, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -110,13 +150,16 @@ _TODO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=58,
-  serialized_end=137,
+  serialized_start=96,
+  serialized_end=213,
 )
 
+_USER.fields_by_name['status'].enum_type = _STATUSTYPE
 _TODO.fields_by_name['user'].message_type = _USER
+_TODO.fields_by_name['status'].enum_type = _STATUSTYPE
 DESCRIPTOR.message_types_by_name['User'] = _USER
 DESCRIPTOR.message_types_by_name['ToDo'] = _TODO
+DESCRIPTOR.enum_types_by_name['StatusType'] = _STATUSTYPE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 User = _reflection.GeneratedProtocolMessageType('User', (_message.Message,), dict(
@@ -141,12 +184,12 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=140,
-  serialized_end=403,
+  serialized_start=255,
+  serialized_end=511,
   methods=[
   _descriptor.MethodDescriptor(
-    name='add_user',
-    full_name='protobuf.TodoService.add_user',
+    name='AddUser',
+    full_name='protobuf.TodoService.AddUser',
     index=0,
     containing_service=None,
     input_type=_USER,
@@ -154,8 +197,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='add_todo',
-    full_name='protobuf.TodoService.add_todo',
+    name='AddToDo',
+    full_name='protobuf.TodoService.AddToDo',
     index=1,
     containing_service=None,
     input_type=_TODO,
@@ -163,8 +206,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='update_todo',
-    full_name='protobuf.TodoService.update_todo',
+    name='UpdateToDo',
+    full_name='protobuf.TodoService.UpdateToDo',
     index=2,
     containing_service=None,
     input_type=_TODO,
@@ -172,8 +215,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='get_todo_list',
-    full_name='protobuf.TodoService.get_todo_list',
+    name='GetToDoList',
+    full_name='protobuf.TodoService.GetToDoList',
     index=3,
     containing_service=None,
     input_type=_USER,
@@ -181,8 +224,8 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='delete_todo_list',
-    full_name='protobuf.TodoService.delete_todo_list',
+    name='DeleteToDoList',
+    full_name='protobuf.TodoService.DeleteToDoList',
     index=4,
     containing_service=None,
     input_type=_USER,

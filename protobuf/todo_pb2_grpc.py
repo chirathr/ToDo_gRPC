@@ -14,28 +14,28 @@ class TodoServiceStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.add_user = channel.unary_unary(
-        '/protobuf.TodoService/add_user',
+    self.AddUser = channel.unary_unary(
+        '/protobuf.TodoService/AddUser',
         request_serializer=todo__pb2.User.SerializeToString,
         response_deserializer=todo__pb2.User.FromString,
         )
-    self.add_todo = channel.unary_unary(
-        '/protobuf.TodoService/add_todo',
+    self.AddToDo = channel.unary_unary(
+        '/protobuf.TodoService/AddToDo',
         request_serializer=todo__pb2.ToDo.SerializeToString,
         response_deserializer=todo__pb2.ToDo.FromString,
         )
-    self.update_todo = channel.unary_unary(
-        '/protobuf.TodoService/update_todo',
+    self.UpdateToDo = channel.unary_unary(
+        '/protobuf.TodoService/UpdateToDo',
         request_serializer=todo__pb2.ToDo.SerializeToString,
         response_deserializer=todo__pb2.ToDo.FromString,
         )
-    self.get_todo_list = channel.unary_stream(
-        '/protobuf.TodoService/get_todo_list',
+    self.GetToDoList = channel.unary_stream(
+        '/protobuf.TodoService/GetToDoList',
         request_serializer=todo__pb2.User.SerializeToString,
         response_deserializer=todo__pb2.ToDo.FromString,
         )
-    self.delete_todo_list = channel.unary_stream(
-        '/protobuf.TodoService/delete_todo_list',
+    self.DeleteToDoList = channel.unary_stream(
+        '/protobuf.TodoService/DeleteToDoList',
         request_serializer=todo__pb2.User.SerializeToString,
         response_deserializer=todo__pb2.ToDo.FromString,
         )
@@ -45,35 +45,35 @@ class TodoServiceServicer(object):
   # missing associated documentation comment in .proto file
   pass
 
-  def add_user(self, request, context):
+  def AddUser(self, request, context):
     """Add a user
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def add_todo(self, request, context):
+  def AddToDo(self, request, context):
     """Add, update ToDo
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def update_todo(self, request, context):
+  def UpdateToDo(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def get_todo_list(self, request, context):
-    """Get or Delete list of Todos
+  def GetToDoList(self, request, context):
+    """Get or Delete list of ToDo
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def delete_todo_list(self, request, context):
+  def DeleteToDoList(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -83,28 +83,28 @@ class TodoServiceServicer(object):
 
 def add_TodoServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'add_user': grpc.unary_unary_rpc_method_handler(
-          servicer.add_user,
+      'AddUser': grpc.unary_unary_rpc_method_handler(
+          servicer.AddUser,
           request_deserializer=todo__pb2.User.FromString,
           response_serializer=todo__pb2.User.SerializeToString,
       ),
-      'add_todo': grpc.unary_unary_rpc_method_handler(
-          servicer.add_todo,
+      'AddToDo': grpc.unary_unary_rpc_method_handler(
+          servicer.AddToDo,
           request_deserializer=todo__pb2.ToDo.FromString,
           response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
-      'update_todo': grpc.unary_unary_rpc_method_handler(
-          servicer.update_todo,
+      'UpdateToDo': grpc.unary_unary_rpc_method_handler(
+          servicer.UpdateToDo,
           request_deserializer=todo__pb2.ToDo.FromString,
           response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
-      'get_todo_list': grpc.unary_stream_rpc_method_handler(
-          servicer.get_todo_list,
+      'GetToDoList': grpc.unary_stream_rpc_method_handler(
+          servicer.GetToDoList,
           request_deserializer=todo__pb2.User.FromString,
           response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
-      'delete_todo_list': grpc.unary_stream_rpc_method_handler(
-          servicer.delete_todo_list,
+      'DeleteToDoList': grpc.unary_stream_rpc_method_handler(
+          servicer.DeleteToDoList,
           request_deserializer=todo__pb2.User.FromString,
           response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
