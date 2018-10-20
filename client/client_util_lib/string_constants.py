@@ -13,5 +13,3 @@ ERROR_FAILED_ADD_TODO = 'Failed to add todo!'
 ERROR_WRONG_CHOICE = 'Wrong choice, Try again!'
 ERROR_FAILED_TO_MARK_TODO = 'Failed to mark todo:{0} as done'
 ERROR_FAILED_DELETE_TODO = 'Failed to delete todo:{0}'
-
-
