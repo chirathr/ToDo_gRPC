@@ -4,20 +4,15 @@ package protobuf;
 
 service TodoService {
     // Add a user
-    rpc AddUser (User) returns (User) {
-    }
+    rpc AddUser (User) returns (User) {}
 
     // Add, update ToDo
-    rpc AddToDo (ToDo) returns (ToDo) {
-    }
-    rpc UpdateToDo (ToDo) returns (ToDo) {
-    }
+    rpc AddToDo (ToDo) returns (ToDo) {}
+    rpc UpdateToDo (ToDo) returns (ToDo) {}
 
     // Get or Delete list of ToDo
-    rpc GetToDoList (User) returns (stream ToDo) {
-    }
-    rpc DeleteToDoList (User) returns (stream ToDo) {
-    }
+    rpc GetToDoList (User) returns (stream ToDo) {}
+    rpc DeleteToDoList (User) returns (stream ToDo) {}
 }
 
 enum StatusType {
