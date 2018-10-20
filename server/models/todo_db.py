@@ -1,5 +1,4 @@
 import sqlite3
-from protobuf.todo_pb2 import User, ToDo
 
 
 class ToDoDb:
@@ -26,6 +25,11 @@ class ToDoDb:
                     FOREIGN KEY(user_id) REFERENCES user(id)
                 );'''
         )
+
+    @staticmethod
+    def is_valid_id(int_id, name="id"):
+        if not (isinstance(int_id, int) and int_id > 0):
+            raise ValueError('{0} should be a valid int'.format(name))
 
     def get_user(self, name):
         get_user_sql = 'select * from user where name = "{name}";'.format(name=name)
@@ -57,50 +61,45 @@ class ToDoDb:
         return user_id
 
     def add_todo(self, user_id, text):
+        self.is_valid_id(user_id, 'user_id')
 
-        if isinstance(user_id, int) and user_id > 0:
-            create_todo_sql = '''
-                        insert into todo (user_id, todo_text, is_done) values ({user_id}, "{text}", {is_done})
-                    '''.format(user_id=user_id, text=text, is_done=0)
+        create_todo_sql = '''
+                    insert into todo (user_id, todo_text, is_done) values ({user_id}, "{text}", {is_done})
+                '''.format(user_id=user_id, text=text, is_done=0)
 
-            self.cursor.execute(create_todo_sql)
-            todo_id = self.cursor.lastrowid
-            self.conn.commit()
-            return todo_id
-
-        return None
+        self.cursor.execute(create_todo_sql)
+        todo_id = self.cursor.lastrowid
+        self.conn.commit()
+        return todo_id
 
     def update_todo(self, todo_id, user_id=None, is_done=False):
-        if isinstance(user_id, int) and user_id > 0:
-            if user_id is None:
-                delete_todo_sql = '''delete from todo where id = {id};'''.format(id=todo_id)
-                self.cursor.execute(delete_todo_sql)
-                todo_id = 0
+        self.is_valid_id(todo_id, 'todo_id')
 
-            if is_done:
-                update_todo_is_done = '''
-                    update todo set is_done = {is_done} where id = {id};
-                    '''.format(id=todo_id, is_done=True)
-                self.cursor.execute(update_todo_is_done)
-
+        # Delete todo
+        if user_id is None:
+            delete_todo_sql = '''delete from todo where id = {id};'''.format(id=todo_id)
+            self.cursor.execute(delete_todo_sql)
             self.conn.commit()
-            return todo_id
-        return None
+            return True
 
-    def get_todo_list(self, user):
-        if not isinstance(user, User):
-            raise AttributeError('user should be an instance of protobuf.todo_pb2.User')
+        if is_done:
+            self.is_valid_id(user_id)
+            update_todo_is_done = '''
+                update todo set is_done = {is_done} where id = {id};
+                '''.format(id=todo_id, is_done=True)
+            self.cursor.execute(update_todo_is_done)
+            self.conn.commit()
+            return True
+        return False
+
+    def get_todo_list(self, user_id):
+        self.is_valid_id(user_id, 'user_id')
+
         select_todo_sql = '''
             select * from todo where user_id = {user_id};
-        '''.format(user_id=user.id)
+        '''.format(user_id=user_id)
         self.cursor.execute(select_todo_sql)
-        rows = self.cursor.fetchall()
-
-        todo_list = []
-        for row in rows:
-            todo = ToDo(id=row[0], user=user, text=row[2], is_done=True if row[3] == 1 else False)
-            todo_list.append(todo)
-        return todo_list
+        return self.cursor.fetchall()
 
     def __del__(self):
         self.conn.close()
