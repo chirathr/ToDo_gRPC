@@ -1,10 +1,112 @@
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
 import pytest
+import grpc
 
 from client.text_format import TextFormat
-from client.client import Client
-from protobuf.todo_pb2 import User, ToDo
+from client.client_util_lib.client_stub import ClientStub
+from protobuf.todo_pb2_grpc import TodoServiceStub
+from protobuf.todo_pb2 import User, ToDo, FAILED, SUCCESS
+
+
+# Tests for client_stub util class
+class TestClientStub:
+    stub = Mock(spec=TodoServiceStub(channel=grpc.insecure_channel('')))
+    user = Mock(spec=User())
+    todo = Mock(spec=ToDo())
+    id_test_arguments = [0, -20, "test", 15.5]
+
+    def test_add_user(self):
+        self.user.status = SUCCESS
+        self.stub.AddUser.return_value = self.user
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.add_user("Test") == self.user
+
+    def test_add_user_returns_none_on_failure(self):
+        self.user.status = FAILED
+        self.stub.AddUser.return_value = self.user
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.add_user("Test") is None
+
+    def test_add_todo(self):
+        self.todo.status = SUCCESS
+        self.stub.AddToDo.return_value = self.todo
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.add_todo(1, "Test todo") == self.todo
+
+    def test_add_todo_returns_none_on_failure(self):
+        self.todo.status = FAILED
+        self.stub.AddToDo.return_value = self.todo
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.add_todo(1, "Test todo") is None
+
+    def add_todo_raises_value_error(self):
+        client_stub = ClientStub(stub=self.stub)
+
+        for user_id in self.id_test_arguments:
+            with pytest.raises(ValueError):
+                client_stub.add_todo(user_id, "Todo test")
+
+    def test_get_todo_list(self):
+        self.todo.status = SUCCESS
+        todo_list = [self.todo, self.todo, self.todo]
+        self.stub.GetToDoList.return_value = todo_list
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.get_todo_list(1) == todo_list
+
+    def test_get_todo_list_raise_value_error_for_todo_id(self):
+        client_stub = ClientStub(stub=self.stub)
+        for todo_id in self.id_test_arguments:
+            with pytest.raises(ValueError):
+                client_stub.get_todo_list(todo_id)
+
+    def test_update_todo_with_delete(self):
+        self.todo.status = SUCCESS
+        self.stub.UpdateToDo.return_value = self.todo
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.update_todo(1, delete=True)
+
+    def test_update_todo_with_delete_raise_value_error(self):
+        client_stub = ClientStub(stub=self.stub)
+        for todo_id in self.id_test_arguments:
+            with pytest.raises(ValueError):
+                client_stub.update_todo(todo_id, delete=True)
+
+    def test_update_todo_with_delete_is_done_raises_value_error(self):
+        client_stub = ClientStub(stub=self.stub)
+        with pytest.raises(ValueError):
+            client_stub.update_todo(1, 1, delete=True, is_done=True)
+
+    def test_update_todo_is_done_without_user_id(self):
+        client_stub = ClientStub(stub=self.stub)
+        with pytest.raises(ValueError):
+            client_stub.update_todo(1, is_done=True)
+
+    def test_update_todo_with_is_done(self):
+        self.todo.status = SUCCESS
+        self.stub.UpdateToDo.return_value = self.todo
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.update_todo(1, user_id=1, is_done=True)
+
+    def test_update_todo_with_is_done_and_text(self):
+        self.todo.status = SUCCESS
+        self.stub.UpdateToDo.return_value = self.todo
+
+        client_stub = ClientStub(stub=self.stub)
+        assert client_stub.update_todo(1, user_id=1, text="Todo", is_done=True)
+
+    def test_get_todo_list_raise_value_error_for_user_id(self):
+        client_stub = ClientStub(stub=self.stub)
+        for user_id in self.id_test_arguments:
+            with pytest.raises(ValueError):
+                client_stub.update_todo(1, user_id=user_id)
 
 
 # Tests for TextFormat
@@ -37,82 +139,3 @@ class TestTextFormat:
     def test_done_todo_text_raises_value_error_on_wrong_type(self):
         with pytest.raises(ValueError):
             TextFormat.todo_done_text(None)
-
-
-# Tests for Client class
-class TestClient:
-
-    def test_load_user(self):
-        stub = Mock()
-        stub.add_user.return_value = User(id=1)
-        client = Client(stub=stub)
-        assert client.load_user('User')
-        stub.add_user.assert_called_once()
-        stub.add_user.assert_called_with(User(name='User'))
-
-    def test_load_user_fails(self):
-        stub = Mock()
-        stub.add_user.return_value = User()
-        client = Client(stub=stub)
-        assert not client.load_user('User')
-        stub.add_user.assert_called_with(User(name='User'))
-
-    def test_add_todo(self):
-        stub = Mock()
-        user = User(id=1, name="Name")
-        stub.add_todo.return_value = ToDo(id=1, user=user, text="Todo item")
-        client = Client(stub=stub, user=user)
-        assert client.add_todo('Todo item')
-        stub.add_todo.assert_called_with(ToDo(user=user, text="Todo item"))
-
-    def test_add_todo_fails(self):
-        stub = Mock()
-        user = User(id=1, name="Name")
-        stub.add_todo.return_value = ToDo(id=0)
-        client = Client(stub=stub, user=user)
-        assert not client.add_todo('Todo item')
-        stub.add_todo.assert_called_with(ToDo(user=user, text="Todo item"))
-
-    def test_add_todo_without_user_calls_load_user(self):
-        stub = Mock()
-        user = User(id=1, name="Name")
-        stub.add_todo.return_value = ToDo(id=1, user=user, text="Todo item")
-        client = Client(stub=stub)
-        client.load_user = MagicMock()
-        client.add_todo(todo_text="Todo")
-        client.load_user.assert_called()
-
-    def _todo_list(self, user):
-        todo_list = [
-            ToDo(id=1, user=user, text="Todo 1"),
-            ToDo(id=2, user=user, text="Todo 2"),
-            ToDo(id=3, user=user, text="Todo 3"),
-        ]
-
-        for todo in todo_list:
-            yield todo
-
-    def test_load_todo_list(self):
-        stub = Mock()
-        user = User(id=1, name="Name")
-        stub.get_todo_list.return_value = self._todo_list(user)
-        client = Client(stub=stub, user=user)
-        assert client.load_todo_list()
-        stub.get_todo_list.assert_called_with(user)
-
-    def test_load_todo_list_fails(self):
-        stub = Mock()
-        user = User(id=1, name="Name")
-        stub.get_todo_list.return_value = []
-        client = Client(stub=stub, user=user)
-        assert not client.load_todo_list()
-        stub.get_todo_list.assert_called_with(user)
-
-    def test_load_todo_list(self):
-        stub = Mock()
-        user = User(id=1, name="Name")
-        stub.get_todo_list.return_value = self._todo_list(user)
-        client = Client(stub=stub)
-        client.load_user = MagicMock()
-        client.load_todo_list()
-        client.load_user.assert_called()

@@ -11,7 +11,7 @@ class ClientStub:
         self.todo_list = []
 
     @staticmethod
-    def is_valid_id(int_id, name="id"):
+    def _is_valid_id(int_id, name="id"):
         if not (isinstance(int_id, int) and int_id > 0):
             raise ValueError('{0} should be a valid int'.format(name))
         return True
@@ -24,7 +24,7 @@ class ClientStub:
         return None
 
     def add_todo(self, user_id, todo_text):
-        self.is_valid_id(user_id, 'user_id')
+        self._is_valid_id(user_id, 'user_id')
 
         todo = ToDo(user=User(id=user_id), text=str(todo_text))
         todo_response = self.stub.AddToDo(todo)
@@ -33,7 +33,7 @@ class ClientStub:
         return None
 
     def get_todo_list(self, user_id):
-        self.is_valid_id(user_id, 'user_id')
+        self._is_valid_id(user_id, 'user_id')
 
         user = User(id=user_id)
         todo_list = self.stub.GetToDoList(user)
@@ -44,9 +44,15 @@ class ClientStub:
         return todo_item_list
 
     def update_todo(self, todo_id, user_id=None, text=None, is_done=False, delete=False):
-        self.is_valid_id(todo_id, 'todo_id')
+        self._is_valid_id(todo_id, 'todo_id')
         if user_id is not None:
-            self.is_valid_id(user_id, 'user_id')
+            self._is_valid_id(user_id, 'user_id')
+
+        if is_done and delete:
+            raise ValueError('Both is_done and delete cannot be true together')
+
+        if is_done and not user_id:
+            raise ValueError('user_id is required for setting is_done')
 
         if delete:
             todo_response = self.stub.UpdateToDo(ToDo(id=todo_id))
@@ -62,7 +68,7 @@ class ClientStub:
 
     # TODO: complete method to delete all todo
     def delete_all_todo(self, user_id):
-        self.is_valid_id(user_id, 'user_id')
+        self._is_valid_id(user_id, 'user_id')
         return []
 
     def __del__(self):

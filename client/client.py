@@ -24,6 +24,7 @@ class Client:
             exit(0)
 
     def add_todo(self, todo_text=None):
+        # TODO: Handle all the value errors
         if not self.user:
             self.load_user()
         todo_text = todo_text or input(string_constants.ERROR_TODO)

@@ -64,7 +64,8 @@ class ToDoDb:
         self.is_valid_id(user_id, 'user_id')
 
         create_todo_sql = '''
-                    insert into todo (user_id, todo_text, is_done) values ({user_id}, "{text}", {is_done})
+                    insert into todo (user_id, todo_text, is_done) values 
+                    ({user_id}, "{text}", {is_done})
                 '''.format(user_id=user_id, text=text, is_done=0)
 
         self.cursor.execute(create_todo_sql)
