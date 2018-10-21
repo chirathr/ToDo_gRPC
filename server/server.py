@@ -1,5 +1,5 @@
 from protobuf import todo_pb2_grpc
-from server.server_util_lib.main import add_user, add_todo, update_todo, get_todo_list
+from server.server_util_lib.main import ServerUtils
 
 
 class ToDoServicer(todo_pb2_grpc.TodoServiceServicer):
@@ -8,16 +8,16 @@ class ToDoServicer(todo_pb2_grpc.TodoServiceServicer):
     """
 
     def AddUser(self, request, context):
-        return add_user(request)
+        return ServerUtils().add_user(request)
 
     def AddToDo(self, request, context):
-        return add_todo(request)
+        return ServerUtils().add_todo(request)
 
     def UpdateToDo(self, request, context):
-        return update_todo(request)
+        return ServerUtils().update_todo(request)
 
     def GetToDoList(self, request, context):
-        todo_list = get_todo_list(request)
+        todo_list = ServerUtils().get_todo_list(request)
         for todo in todo_list:
             yield todo
 
