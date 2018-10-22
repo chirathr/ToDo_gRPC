@@ -2,3 +2,4 @@
 omit =
     images/*
     protobuf/*
+    */test*.py

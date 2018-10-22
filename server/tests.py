@@ -1,3 +1,7 @@
+import os
+import sqlite3
+
+import pytest
 from unittest.mock import Mock
 
 from server.models.todo_db import ToDoDb
@@ -155,3 +159,132 @@ class TestServerUtils:
 
 
 # Test models
+    class TestToDoDb:
+        @pytest.fixture
+        def db_conn(self, tmpdir):
+            file = os.path.join(tmpdir.strpath, "test.db")
+            if os.path.exists(file):
+                os.remove(file)
+            conn = sqlite3.connect(file)
+            yield conn
+
+        @staticmethod
+        def _add_user(conn, name):
+            create_user_sql = 'insert into user (name) values("{name}");'.format(name=name)
+            cursor = conn.cursor()
+            cursor.execute(create_user_sql)
+            user_id = cursor.lastrowid
+            conn.commit()
+            return user_id
+
+        @staticmethod
+        def _get_user(conn, id):
+            get_user_sql = 'select * from user where id = "{id}";'.format(id=id)
+            cursor = conn.cursor()
+            cursor.execute(get_user_sql)
+            return cursor.fetchone()
+
+        @staticmethod
+        def _add_todo(conn, user_id, text):
+            create_todo_sql = 'insert into todo (user_id, todo_text, is_done) ' \
+                              'values ({user_id}, "{text}", {is_done})' \
+                              ''.format(user_id=user_id, text=text, is_done=0)
+            cursor = conn.cursor()
+            cursor.execute(create_todo_sql)
+            todo_id = cursor.lastrowid
+            conn.commit()
+            return todo_id
+
+        @staticmethod
+        def _get_todo(conn, id):
+            get_todo_sql = 'select * from todo where id = "{id}";'.format(id=id)
+            cursor = conn.cursor()
+            cursor.execute(get_todo_sql)
+            return cursor.fetchone()
+
+        def test_get_user(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            user_id = self._add_user(db_conn, "Test user")
+
+            assert todo_db.get_user("Test user") == user_id
+
+        def test_get_user_empty_db(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            assert todo_db.get_user("Test user") is None
+
+        def test_add_user(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            user_id = todo_db.add_user_if_not_exist("Test user")
+            user = self._get_user(db_conn, user_id)
+
+            assert user[1] == "Test user"
+
+        def test_add_user_if_exists(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            self._add_user(db_conn, "Test user")
+            user_id = todo_db.add_user_if_not_exist("Test user")
+            user = self._get_user(db_conn, user_id)
+
+            assert user[1] == "Test user"
+
+        def test_add_todo(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            user_id = self._add_user(db_conn, "Test user")
+
+            todo_id = todo_db.add_todo(user_id, "Test todo")
+            todo = self._get_todo(db_conn, todo_id)
+
+            assert todo[1] == user_id
+            assert todo[2] == "Test todo"
+
+        def test_add_todo_invalid_user_id(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            with pytest.raises(ValueError):
+                todo_db.add_todo(None, "")
+            with pytest.raises(ValueError):
+                todo_db.add_todo(-1, "")
+
+        def test_update_todo_is_done(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            user_id = self._add_user(db_conn, "Test user")
+            todo_id = self._add_todo(db_conn, user_id, "Test Todo")
+
+            assert todo_db.update_todo(todo_id, user_id, is_done=True)
+
+            assert self._get_todo(db_conn, todo_id)[3] == 1
+
+        def test_update_todo_is_done_raises_value_error(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            with pytest.raises(ValueError):
+                todo_db.update_todo(-1, 1, is_done=True)
+            with pytest.raises(ValueError):
+                todo_db.update_todo(1, -1, is_done=True)
+
+            assert todo_db.update_todo(1, 1) is False
+
+        def test_update_todo_delete(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            user_id = self._add_user(db_conn, "Test user")
+            todo_id = self._add_todo(db_conn, user_id, "Test Todo")
+
+            assert todo_db.update_todo(todo_id)
+            assert self._get_todo(db_conn, todo_id) is None
+
+        @staticmethod
+        def _get_todo_list(conn, user_id):
+            select_todo_sql = '''
+                        select * from todo where user_id = {user_id};
+                    '''.format(user_id=user_id)
+            cursor = conn.cursor()
+            cursor.execute(select_todo_sql)
+            return cursor.fetchall()
+
+        def test_get_todo_list(self, db_conn):
+            todo_db = ToDoDb(conn=db_conn)
+            user_id = self._add_user(db_conn, "Test user")
+            todo_1_id = self._add_todo(db_conn, user_id, "Test Todo 1")
+            todo_2_id = self._add_todo(db_conn, user_id, "Test Todo 2")
+
+            todo_list = self._get_todo_list(db_conn, user_id)
+
+            assert todo_db.get_todo_list(user_id) == todo_list
