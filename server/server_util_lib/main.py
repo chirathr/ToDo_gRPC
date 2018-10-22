@@ -27,26 +27,27 @@ class ServerUtils:
         return ToDo(status=FAILED)
 
     def update_todo(self, todo):
-        todo.status = FAILED
-        if isinstance(todo, ToDo) and todo.id != 0:
+        if isinstance(todo, ToDo) and todo.id > 0:
             try:
                 status = self.todo_db.update_todo(
                     todo_id=todo.id,
                     user_id=todo.user.id if todo.user.id != 0 else None,
                     is_done=todo.is_done)
+                print(status)
             except ValueError:
-                return todo
+                status = FAILED
 
-            todo.status = SUCCESS if status else FAILED
-        return todo
+            todo.status = status
+            return todo
+        return ToDo(status=FAILED)
 
     def get_todo_list(self, user):
-        if isinstance(user, User) and user.id != 0:
+        if isinstance(user, User) and user.id > 0:
             todo_list = []
             try:
                 todo_row_list = self.todo_db.get_todo_list(user.id)
             except ValueError:
-                return ToDo(status=FAILED)
+                return [ToDo(status=FAILED), ]
 
             for todo_row in todo_row_list:
                 todo = ToDo(
@@ -58,4 +59,4 @@ class ServerUtils:
                 todo_list.append(todo)
             return todo_list
 
-        return ToDo(status=FAILED)
+        return [ToDo(status=FAILED), ]
