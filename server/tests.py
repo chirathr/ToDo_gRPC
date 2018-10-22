@@ -124,7 +124,8 @@ class TestServerUtils:
                 id=todo_row[0],
                 user=User(id=todo_row[1]),
                 text=todo_row[2],
-                is_done=True if todo_row[3] == 1 else False
+                is_done=True if todo_row[3] == 1 else False,
+                status=SUCCESS
             )
             todo_list.append(todo)
 
@@ -151,3 +152,6 @@ class TestServerUtils:
 
         todo_list = server_utils.get_todo_list(User(id=0))
         assert todo_list[0].status == FAILED
+
+
+# Test models

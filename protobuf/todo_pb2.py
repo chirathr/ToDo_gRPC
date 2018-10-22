@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='protobuf',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\"F\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12$\n\x06status\x18\x03 \x01(\x0e\x32\x14.protobuf.StatusType\"u\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x1c\n\x04user\x18\x02 \x01(\x0b\x32\x0e.protobuf.User\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\x12$\n\x06status\x18\x05 \x01(\x0e\x32\x14.protobuf.StatusType*%\n\nStatusType\x12\x0b\n\x07SUCCESS\x10\x00\x12\n\n\x06\x46\x41ILED\x10\x01\x32\x80\x02\n\x0bTodoService\x12+\n\x07\x41\x64\x64User\x12\x0e.protobuf.User\x1a\x0e.protobuf.User\"\x00\x12+\n\x07\x41\x64\x64ToDo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12.\n\nUpdateToDo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12\x31\n\x0bGetToDoList\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x12\x34\n\x0e\x44\x65leteToDoList\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x62\x06proto3')
+  serialized_pb=_b('\n\ntodo.proto\x12\x08protobuf\"F\n\x04User\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12$\n\x06status\x18\x03 \x01(\x0e\x32\x14.protobuf.StatusType\"u\n\x04ToDo\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x1c\n\x04user\x18\x02 \x01(\x0b\x32\x0e.protobuf.User\x12\x0c\n\x04text\x18\x03 \x01(\t\x12\x0f\n\x07is_done\x18\x04 \x01(\x08\x12$\n\x06status\x18\x05 \x01(\x0e\x32\x14.protobuf.StatusType*%\n\nStatusType\x12\n\n\x06\x46\x41ILED\x10\x00\x12\x0b\n\x07SUCCESS\x10\x01\x32\xca\x01\n\x0bTodoService\x12+\n\x07\x41\x64\x64User\x12\x0e.protobuf.User\x1a\x0e.protobuf.User\"\x00\x12+\n\x07\x41\x64\x64ToDo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12.\n\nUpdateToDo\x12\x0e.protobuf.ToDo\x1a\x0e.protobuf.ToDo\"\x00\x12\x31\n\x0bGetToDoList\x12\x0e.protobuf.User\x1a\x0e.protobuf.ToDo\"\x00\x30\x01\x62\x06proto3')
 )
 
 _STATUSTYPE = _descriptor.EnumDescriptor(
@@ -30,11 +30,11 @@ _STATUSTYPE = _descriptor.EnumDescriptor(
   file=DESCRIPTOR,
   values=[
     _descriptor.EnumValueDescriptor(
-      name='SUCCESS', index=0, number=0,
+      name='FAILED', index=0, number=0,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='FAILED', index=1, number=1,
+      name='SUCCESS', index=1, number=1,
       serialized_options=None,
       type=None),
   ],
@@ -46,8 +46,8 @@ _STATUSTYPE = _descriptor.EnumDescriptor(
 _sym_db.RegisterEnumDescriptor(_STATUSTYPE)
 
 StatusType = enum_type_wrapper.EnumTypeWrapper(_STATUSTYPE)
-SUCCESS = 0
-FAILED = 1
+FAILED = 0
+SUCCESS = 1
 
 
 
@@ -185,7 +185,7 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=255,
-  serialized_end=511,
+  serialized_end=457,
   methods=[
   _descriptor.MethodDescriptor(
     name='AddUser',
@@ -218,15 +218,6 @@ _TODOSERVICE = _descriptor.ServiceDescriptor(
     name='GetToDoList',
     full_name='protobuf.TodoService.GetToDoList',
     index=3,
-    containing_service=None,
-    input_type=_USER,
-    output_type=_TODO,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='DeleteToDoList',
-    full_name='protobuf.TodoService.DeleteToDoList',
-    index=4,
     containing_service=None,
     input_type=_USER,
     output_type=_TODO,

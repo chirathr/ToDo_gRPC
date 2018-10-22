@@ -56,7 +56,6 @@ class ClientStub:
 
         if delete:
             todo_response = self.stub.UpdateToDo(ToDo(id=todo_id))
-            print(todo_response)
         else:
             if text:
                 todo = ToDo(id=todo_id, user=User(id=user_id), text=text, is_done=is_done)
@@ -65,11 +64,6 @@ class ClientStub:
                 todo = ToDo(id=todo_id, user=User(id=user_id), is_done=is_done)
             todo_response = self.stub.UpdateToDo(todo)
         return todo_response.status == SUCCESS
-
-    # TODO: complete method to delete all todo
-    def delete_all_todo(self, user_id):
-        self._is_valid_id(user_id, 'user_id')
-        return []
 
     def __del__(self):
         self.channel.close()

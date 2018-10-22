@@ -20,7 +20,3 @@ class ToDoServicer(todo_pb2_grpc.TodoServiceServicer):
         todo_list = ServerUtils().get_todo_list(request)
         for todo in todo_list:
             yield todo
-
-    def delete_todo_list(self, user, context):
-        # TODO: Complete delete_todo_list()
-        pass

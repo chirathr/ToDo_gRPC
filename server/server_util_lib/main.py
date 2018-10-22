@@ -33,7 +33,6 @@ class ServerUtils:
                     todo_id=todo.id,
                     user_id=todo.user.id if todo.user.id != 0 else None,
                     is_done=todo.is_done)
-                print(status)
             except ValueError:
                 status = FAILED
 
@@ -54,7 +53,8 @@ class ServerUtils:
                     id=todo_row[0],
                     user=User(id=todo_row[1]),
                     text=todo_row[2],
-                    is_done=True if todo_row[3] == 1 else False
+                    is_done=True if todo_row[3] == 1 else False,
+                    status=SUCCESS
                 )
                 todo_list.append(todo)
             return todo_list

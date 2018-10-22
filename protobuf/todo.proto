@@ -12,12 +12,11 @@ service TodoService {
 
     // Get or Delete list of ToDo
     rpc GetToDoList (User) returns (stream ToDo) {}
-    rpc DeleteToDoList (User) returns (stream ToDo) {}
 }
 
 enum StatusType {
-    SUCCESS = 0;
-    FAILED = 1;
+    FAILED = 0;
+    SUCCESS = 1;
 }
 
 message User {

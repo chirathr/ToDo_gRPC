@@ -34,11 +34,6 @@ class TodoServiceStub(object):
         request_serializer=todo__pb2.User.SerializeToString,
         response_deserializer=todo__pb2.ToDo.FromString,
         )
-    self.DeleteToDoList = channel.unary_stream(
-        '/protobuf.TodoService/DeleteToDoList',
-        request_serializer=todo__pb2.User.SerializeToString,
-        response_deserializer=todo__pb2.ToDo.FromString,
-        )
 
 
 class TodoServiceServicer(object):
@@ -73,13 +68,6 @@ class TodoServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def DeleteToDoList(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
 
 def add_TodoServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -100,11 +88,6 @@ def add_TodoServiceServicer_to_server(servicer, server):
       ),
       'GetToDoList': grpc.unary_stream_rpc_method_handler(
           servicer.GetToDoList,
-          request_deserializer=todo__pb2.User.FromString,
-          response_serializer=todo__pb2.ToDo.SerializeToString,
-      ),
-      'DeleteToDoList': grpc.unary_stream_rpc_method_handler(
-          servicer.DeleteToDoList,
           request_deserializer=todo__pb2.User.FromString,
           response_serializer=todo__pb2.ToDo.SerializeToString,
       ),
