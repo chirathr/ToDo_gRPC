@@ -3,3 +3,4 @@ omit =
     images/*
     protobuf/*
     */test*.py
+    */*_constants.py
