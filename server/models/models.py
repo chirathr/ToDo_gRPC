@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, create_engine
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine.url import URL
 
@@ -27,11 +27,14 @@ class ToDo(Base):
     user = relationship(
         User,
         backref=backref(
-            'users',
+            'todos',
             uselist=True,
-            casade='delete,all'
+            cascade='delete,all'
         )
     )
+
+    def __str__(self):
+        return '{0}. {1}'.format(self.id, self.text)
 
 
 def create_db_tables(sqlite_db={'drivername': 'sqlite', 'database': 'todo.sqlite3'}):
@@ -39,3 +42,11 @@ def create_db_tables(sqlite_db={'drivername': 'sqlite', 'database': 'todo.sqlite
     engine = create_engine(url)
 
     Base.metadata.create_all(engine)
+
+
+def get_session(sqlite_db={'drivername': 'sqlite', 'database': 'todo.sqlite3'}):
+    url = URL(**sqlite_db)
+    engine = create_engine(url)
+
+    DBSession = sessionmaker(bind=engine)
+    return DBSession()
