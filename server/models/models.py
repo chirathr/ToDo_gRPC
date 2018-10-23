@@ -37,14 +37,16 @@ class ToDo(Base):
         return '{0}. {1}'.format(self.id, self.text)
 
 
-def create_db_tables(sqlite_db={'drivername': 'sqlite', 'database': 'todo.sqlite3'}):
+def create_db_tables(database_path='todo.sqlite3'):
+    sqlite_db={'drivername': 'sqlite', 'database': database_path}
     url = URL(**sqlite_db)
     engine = create_engine(url)
 
     Base.metadata.create_all(engine)
 
 
-def get_session(sqlite_db={'drivername': 'sqlite', 'database': 'todo.sqlite3'}):
+def get_session(database_path='todo.sqlite3'):
+    sqlite_db={'drivername': 'sqlite', 'database': database_path}
     url = URL(**sqlite_db)
     engine = create_engine(url)
 

@@ -44,16 +44,16 @@ class ServerUtils:
         if isinstance(user, User) and user.id > 0:
             todo_list = []
             try:
-                todo_row_list = self.todo_db.get_todo_list(user.id)
+                _todo_list = self.todo_db.get_todo_list(user.id)
             except ValueError:
                 return [ToDo(status=FAILED), ]
 
-            for todo_row in todo_row_list:
+            for current_todo in _todo_list:
                 todo = ToDo(
-                    id=todo_row[0],
-                    user=User(id=todo_row[1]),
-                    text=todo_row[2],
-                    is_done=True if todo_row[3] == 1 else False,
+                    id=current_todo.id,
+                    user=User(id=current_todo.user.id),
+                    text=current_todo.text,
+                    is_done=current_todo.is_done,
                     status=SUCCESS
                 )
                 todo_list.append(todo)
