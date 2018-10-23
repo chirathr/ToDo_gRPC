@@ -282,8 +282,8 @@ class TestServerUtils:
         def test_get_todo_list(self, db_conn):
             todo_db = ToDoDb(conn=db_conn)
             user_id = self._add_user(db_conn, "Test user")
-            todo_1_id = self._add_todo(db_conn, user_id, "Test Todo 1")
-            todo_2_id = self._add_todo(db_conn, user_id, "Test Todo 2")
+            self._add_todo(db_conn, user_id, "Test Todo 1")
+            self._add_todo(db_conn, user_id, "Test Todo 2")
 
             todo_list = self._get_todo_list(db_conn, user_id)
 

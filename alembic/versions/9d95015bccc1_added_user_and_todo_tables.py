@@ -1,7 +1,7 @@
 """Added User and ToDo tables
 
 Revision ID: 9d95015bccc1
-Revises: 
+Revises:
 Create Date: 2018-10-23 14:57:48.031282
 
 """
@@ -33,5 +33,5 @@ def upgrade():
 
 
 def downgrade():
-   op.drop_table('user')
-   op.drop_table('todo')
+    op.drop_table('user')
+    op.drop_table('todo')
