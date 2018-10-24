@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, create_engine
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.engine.url import URL
 
 
 Base = declarative_base()
@@ -37,18 +36,18 @@ class ToDo(Base):
         return '{0}. {1}'.format(self.id, self.text)
 
 
-def create_db_tables(database_path='todo.sqlite3'):
-    sqlite_db={'drivername': 'sqlite', 'database': database_path}
-    url = URL(**sqlite_db)
-    engine = create_engine(url)
+class DataAccessLayer:
+    def __init__(self, db_path='todo.sqlite3'):
+        self.engine = None
+        self.Session = None
+        self.session = None
+        self.conn_string = 'sqlite:////tmp/my.db'
 
-    Base.metadata.create_all(engine)
+    def connect(self):
+        self.engine = create_engine(self.conn_string)
+        Base.metadata.bind = self.engine
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
 
 
-def get_session(database_path='todo.sqlite3'):
-    sqlite_db={'drivername': 'sqlite', 'database': database_path}
-    url = URL(**sqlite_db)
-    engine = create_engine(url)
-
-    DBSession = sessionmaker(bind=engine)
-    return DBSession()
+dal = DataAccessLayer()

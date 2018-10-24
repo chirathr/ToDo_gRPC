@@ -1,13 +1,17 @@
-import sqlite3
-from server.models.models import create_db_tables, get_session, User, ToDo
-from sqlalchemy import select, insert
+from server.models.models import User, ToDo, dal
+from sqlalchemy import select
 from sqlalchemy.orm import exc
+
 
 class ToDoDb:
 
-    def __init__(self, db_path='todo.sqlite3'):
-        create_db_tables(db_path)
-        self.session = get_session(db_path)
+    def __init__(self, db_session=None):
+        if db_session:
+            self.session = db_session
+        else:
+            dal.connect()
+            dal.session = dal.Session()
+            self.session = dal.session
 
     @staticmethod
     def is_valid_id(int_id, name="id"):
@@ -72,7 +76,7 @@ class ToDoDb:
                 todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
             except exc.NoResultFound:
                 return False
-            
+
             self.session.delete(todo)
             self.session.commit()
             return True

@@ -9,7 +9,7 @@ class ServerUtils:
 
     def add_user(self, user):
         print(isinstance(user, User))
-        
+
         if isinstance(user, User) and user.name:
             print(user.name)
         if isinstance(user, User) and user.name:
