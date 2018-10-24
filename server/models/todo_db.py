@@ -63,6 +63,8 @@ class ToDoDb:
 
     def update_todo(self, todo_id, user_id=None, is_done=False):
         self.is_valid_id(todo_id, 'todo_id')
+        if user_id is not None:
+            self.is_valid_id(user_id, 'user_id')
 
         # Delete todo
         if user_id is None:
@@ -94,8 +96,7 @@ class ToDoDb:
         except exc.NoResultFound:
             raise ValueError("User not found")
 
-        user_list = self.session.query(ToDo).filter(ToDo.user == user).all()
-        return user_list
+        return self.session.query(ToDo).filter(ToDo.user == user).all()
 
     def __del__(self):
         self.session.close()

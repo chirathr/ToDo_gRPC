@@ -8,9 +8,15 @@ class ServerUtils:
         self.todo_db = todo_db or ToDoDb()
 
     def add_user(self, user):
+        print(isinstance(user, User))
+        
         if isinstance(user, User) and user.name:
+            print(user.name)
+        if isinstance(user, User) and user.name:
+            print(user)
             user.id = self.todo_db.add_user_if_not_exist(name=user.name)
-            if user.id != 0:
+            print("User id: " + str(user.id))
+            if user.id > 0:
                 user.status = SUCCESS
                 return user
         return User(status=FAILED)

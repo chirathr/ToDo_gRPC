@@ -7,7 +7,7 @@ from unittest.mock import Mock
 from server.models.todo_db import ToDoDb
 from protobuf.todo_pb2 import User, ToDo, SUCCESS, FAILED
 from server.server_util_lib.main import ServerUtils
-
+from server.models import models
 
 # TestServerUtil class
 class TestServerUtils:
@@ -16,7 +16,7 @@ class TestServerUtils:
     def test_add_user(self):
         self.todo_db.add_user_if_not_exist.return_value = 1
         server_utils = ServerUtils(todo_db=self.todo_db)
-        user = server_utils.add_user(User(name="Test user"))
+        user = server_utils.add_user(user=User(name="Test user"))
 
         assert user.id == 1
         assert user.name == "Test user"
@@ -118,17 +118,17 @@ class TestServerUtils:
         assert todo.status == FAILED
 
     def test_get_todo_list(self):
-        todo_list_data = (
-            (1, 1, "Todo 1", False),
-            (2, 1, "Todo 2", True),
-        )
+        todo_list_data = [
+            models.ToDo(id=1, user=models.User(id=1), text="Todo 1", is_done=True),
+            models.ToDo(id=1, user=models.User(id=1), text="Todo 1", is_done=True),
+        ]
         todo_list = []
-        for todo_row in todo_list_data:
+        for todo_item in todo_list_data:
             todo = ToDo(
-                id=todo_row[0],
-                user=User(id=todo_row[1]),
-                text=todo_row[2],
-                is_done=True if todo_row[3] == 1 else False,
+                id=todo_item.id,
+                user=User(id=todo_item.user.id),
+                text=todo_item.text,
+                is_done=todo_item.is_done,
                 status=SUCCESS
             )
             todo_list.append(todo)
@@ -161,11 +161,15 @@ class TestServerUtils:
 # Test models
     class TestToDoDb:
         @pytest.fixture
-        def db_conn(self, tmpdir):
-            file = os.path.join(tmpdir.strpath, "test.db")
-            if os.path.exists(file):
-                os.remove(file)
-            conn = sqlite3.connect(file)
+        def db_path(self, tmpdir):
+            return os.path.join(tmpdir.strpath, "test.db")
+
+
+        @pytest.fixture
+        def db_conn(self, db_path):
+            if os.path.exists(db_path):
+                os.remove(db_path)
+            conn = sqlite3.connect(db_path)
             yield conn
 
         @staticmethod
@@ -186,7 +190,7 @@ class TestServerUtils:
 
         @staticmethod
         def _add_todo(conn, user_id, text):
-            create_todo_sql = 'insert into todo (user_id, todo_text, is_done) ' \
+            create_todo_sql = 'insert into todo (user_id, text, is_done) ' \
                               'values ({user_id}, "{text}", {is_done})' \
                               ''.format(user_id=user_id, text=text, is_done=0)
             cursor = conn.cursor()
@@ -202,50 +206,56 @@ class TestServerUtils:
             cursor.execute(get_todo_sql)
             return cursor.fetchone()
 
-        def test_get_user(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        @staticmethod
+        def _get_todo_list(db_path, user_id):
+            session = models.get_session(db_path)
+            user = session.query(models.User).filter(models.User.id == user_id).one()
+            return session.query(models.ToDo).filter(models.ToDo.user == user).all()
+
+        def test_get_user(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             user_id = self._add_user(db_conn, "Test user")
 
             assert todo_db.get_user("Test user") == user_id
 
-        def test_get_user_empty_db(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_get_user_empty_db(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             assert todo_db.get_user("Test user") is None
 
-        def test_add_user(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_add_user(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             user_id = todo_db.add_user_if_not_exist("Test user")
             user = self._get_user(db_conn, user_id)
 
             assert user[1] == "Test user"
 
-        def test_add_user_if_exists(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_add_user_if_exists(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             self._add_user(db_conn, "Test user")
             user_id = todo_db.add_user_if_not_exist("Test user")
             user = self._get_user(db_conn, user_id)
 
             assert user[1] == "Test user"
 
-        def test_add_todo(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_add_todo(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             user_id = self._add_user(db_conn, "Test user")
 
             todo_id = todo_db.add_todo(user_id, "Test todo")
             todo = self._get_todo(db_conn, todo_id)
 
-            assert todo[1] == user_id
-            assert todo[2] == "Test todo"
+            assert todo[3] == user_id
+            assert todo[1] == "Test todo"
 
-        def test_add_todo_invalid_user_id(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_add_todo_invalid_user_id(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             with pytest.raises(ValueError):
                 todo_db.add_todo(None, "")
             with pytest.raises(ValueError):
                 todo_db.add_todo(-1, "")
 
-        def test_update_todo_is_done(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_update_todo_is_done(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             user_id = self._add_user(db_conn, "Test user")
             todo_id = self._add_todo(db_conn, user_id, "Test Todo")
 
@@ -253,8 +263,8 @@ class TestServerUtils:
 
             assert self._get_todo(db_conn, todo_id)[3] == 1
 
-        def test_update_todo_is_done_raises_value_error(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_update_todo_is_done_raises_value_error(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             with pytest.raises(ValueError):
                 todo_db.update_todo(-1, 1, is_done=True)
             with pytest.raises(ValueError):
@@ -262,29 +272,23 @@ class TestServerUtils:
 
             assert todo_db.update_todo(1, 1) is False
 
-        def test_update_todo_delete(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_update_todo_delete(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             user_id = self._add_user(db_conn, "Test user")
             todo_id = self._add_todo(db_conn, user_id, "Test Todo")
 
             assert todo_db.update_todo(todo_id)
             assert self._get_todo(db_conn, todo_id) is None
 
-        @staticmethod
-        def _get_todo_list(conn, user_id):
-            select_todo_sql = '''
-                        select * from todo where user_id = {user_id};
-                    '''.format(user_id=user_id)
-            cursor = conn.cursor()
-            cursor.execute(select_todo_sql)
-            return cursor.fetchall()
-
-        def test_get_todo_list(self, db_conn):
-            todo_db = ToDoDb(conn=db_conn)
+        def test_get_todo_list(self, db_conn, db_path):
+            todo_db = ToDoDb(db_path=db_path)
             user_id = self._add_user(db_conn, "Test user")
             self._add_todo(db_conn, user_id, "Test Todo 1")
             self._add_todo(db_conn, user_id, "Test Todo 2")
 
-            todo_list = self._get_todo_list(db_conn, user_id)
+            todo_list = self._get_todo_list(db_path, user_id)
+            actual_todo_list = todo_db.get_todo_list(user_id)
 
-            assert todo_db.get_todo_list(user_id) == todo_list
+            for i in range(len(todo_list)):
+                assert todo_list[i].id == actual_todo_list[i].id
+                assert todo_list[i].text == actual_todo_list[i].text
