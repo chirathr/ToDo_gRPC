@@ -81,33 +81,14 @@ class TestClientStub:
     def test_update_todo_with_delete_is_done_raises_value_error(self):
         client_stub = ClientStub(stub=self.stub)
         with pytest.raises(ValueError):
-            client_stub.update_todo(1, 1, delete=True, is_done=True)
-
-    def test_update_todo_is_done_without_user_id(self):
-        client_stub = ClientStub(stub=self.stub)
-        with pytest.raises(ValueError):
-            client_stub.update_todo(1, is_done=True)
+            client_stub.update_todo(1, delete=True, is_done=True)
 
     def test_update_todo_with_is_done(self):
         self.todo.status = SUCCESS
         self.stub.UpdateToDo.return_value = self.todo
 
         client_stub = ClientStub(stub=self.stub)
-        assert client_stub.update_todo(1, user_id=1, is_done=True)
-
-    def test_update_todo_with_is_done_and_text(self):
-        self.todo.status = SUCCESS
-        self.stub.UpdateToDo.return_value = self.todo
-
-        client_stub = ClientStub(stub=self.stub)
-        assert client_stub.update_todo(1, user_id=1, text="Todo", is_done=True)
-
-    def test_get_todo_list_raise_value_error_for_user_id(self):
-        client_stub = ClientStub(stub=self.stub)
-        for user_id in self.id_test_arguments:
-            with pytest.raises(ValueError):
-                client_stub.update_todo(1, user_id=user_id)
-
+        assert client_stub.update_todo(1, is_done=True)
 
 # Tests for TextFormat
 class TestTextFormat:
