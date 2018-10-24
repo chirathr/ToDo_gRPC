@@ -134,17 +134,15 @@ class TestToDoDb:
         user = self._add_user(db_session, "Test user")
         todo = self._add_todo(db_session, user.id, "Test Todo")
 
-        assert todo_db.update_todo(todo.id, user.id, is_done=True)
+        assert todo_db.update_todo(todo.id, is_done=True)
         assert self._get_todo(db_session, todo.id).is_done
 
     def test_update_todo_is_done_raises_value_error(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
         with pytest.raises(ValueError):
-            todo_db.update_todo(-1, 1, is_done=True)
+            todo_db.update_todo(-1, is_done=True)
         with pytest.raises(ValueError):
-            todo_db.update_todo(1, -1, is_done=True)
-
-        assert todo_db.update_todo(1, 1) is False
+            assert todo_db.update_todo(1) is False
 
     def test_update_todo_delete(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
@@ -153,6 +151,15 @@ class TestToDoDb:
 
         assert todo_db.update_todo(todo.id)
         assert self._get_todo(db_session, todo.id) is None
+
+    def test_update_todo_not_found_raises_exception(self, db_session):
+        todo_db = ToDoDb(db_session=db_session)
+
+        with pytest.raises(ValueError):
+            todo_db.update_todo(1)
+        
+        with pytest.raises(ValueError):
+            todo_db.update_todo(1)
 
     def test_get_todo_list(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
