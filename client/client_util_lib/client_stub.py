@@ -43,25 +43,16 @@ class ClientStub:
                 todo_item_list.append(todo)
         return todo_item_list
 
-    def update_todo(self, todo_id, user_id=None, text=None, is_done=False, delete=False):
+    def update_todo(self, todo_id, is_done=False, delete=False):
         self._is_valid_id(todo_id, 'todo_id')
-        if user_id is not None:
-            self._is_valid_id(user_id, 'user_id')
 
         if is_done and delete:
             raise ValueError('Both is_done and delete cannot be true together')
 
-        if is_done and not user_id:
-            raise ValueError('user_id is required for setting is_done')
-
         if delete:
             todo_response = self.stub.UpdateToDo(ToDo(id=todo_id))
-        else:
-            if text:
-                todo = ToDo(id=todo_id, user=User(id=user_id), text=text, is_done=is_done)
-            # Mark as done
-            else:
-                todo = ToDo(id=todo_id, user=User(id=user_id), is_done=is_done)
+        if is_done:
+            todo = ToDo(id=todo_id, is_done=is_done)
             todo_response = self.stub.UpdateToDo(todo)
         return todo_response.status == SUCCESS
 

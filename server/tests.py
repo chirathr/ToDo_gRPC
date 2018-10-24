@@ -167,6 +167,12 @@ class TestToDoDb:
             assert todo_list[i].id == actual_todo_list[i].id
             assert todo_list[i].text == actual_todo_list[i].text
 
+    def test_get_todo_list_user_not_found_raises_exception(self, db_session):
+        todo_db = ToDoDb(db_session=db_session)
+
+        with pytest.raises(ValueError):
+            todo_db.get_todo_list(1)
+
 
 # TestServerUtil class
 class TestServerUtils:

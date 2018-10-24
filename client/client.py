@@ -48,7 +48,7 @@ class Client:
             print(string_constants.ERROR_WRONG_CHOICE)
             return self.mark_todo_as_done()
 
-        if not self.client_stub.update_todo(todo_id, self.user.id, is_done=True):
+        if not self.client_stub.update_todo(todo_id, is_done=True):
             print(string_constants.ERROR_FAILED_TO_MARK_TODO.format(todo_id))
 
     def delete_todo(self, todo_id=None):

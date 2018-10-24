@@ -56,7 +56,7 @@ class ToDoDb:
         try:
             user = self.session.query(User).filter(User.id == user_id).one()
         except exc.NoResultFound:
-            return None
+            raise ValueError("User not found")
 
         # Add the todo
         todo = ToDo(text=text, user=user)
@@ -65,30 +65,28 @@ class ToDoDb:
 
         return todo.id
 
-    def update_todo(self, todo_id, user_id=None, is_done=False):
+    def update_todo(self, todo_id, is_done=False):
         self.is_valid_id(todo_id, 'todo_id')
-        if user_id is not None:
-            self.is_valid_id(user_id, 'user_id')
-
-        # Delete todo
-        if user_id is None:
-            try:
-                todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
-            except exc.NoResultFound:
-                return False
-
-            self.session.delete(todo)
-            self.session.commit()
-            return True
 
         if is_done:
             try:
                 todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
             except exc.NoResultFound:
-                return False
+                raise ValueError("ToDo not found")
             todo.is_done = True
             self.session.commit()
             return True
+        else:
+            # Delete todo
+            try:
+                todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
+            except exc.NoResultFound:
+                raise ValueError("Todo not found")
+
+            self.session.delete(todo)
+            self.session.commit()
+            return True
+            
         return False
 
     def get_todo_list(self, user_id):

@@ -8,14 +8,8 @@ class ServerUtils:
         self.todo_db = todo_db or ToDoDb()
 
     def add_user(self, user):
-        print(isinstance(user, User))
-
         if isinstance(user, User) and user.name:
-            print(user.name)
-        if isinstance(user, User) and user.name:
-            print(user)
             user.id = self.todo_db.add_user_if_not_exist(name=user.name)
-            print("User id: " + str(user.id))
             if user.id > 0:
                 user.status = SUCCESS
                 return user
@@ -37,7 +31,6 @@ class ServerUtils:
             try:
                 status = self.todo_db.update_todo(
                     todo_id=todo.id,
-                    user_id=todo.user.id if todo.user.id != 0 else None,
                     is_done=todo.is_done)
             except ValueError:
                 status = FAILED
