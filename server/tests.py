@@ -128,6 +128,8 @@ class TestToDoDb:
             todo_db.add_todo(None, "")
         with pytest.raises(ValueError):
             todo_db.add_todo(-1, "")
+        with pytest.raises(ValueError):
+            todo_db.add_todo(10, "Todo 1")
 
     def test_update_todo_is_done(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
@@ -159,7 +161,7 @@ class TestToDoDb:
             todo_db.update_todo(1)
         
         with pytest.raises(ValueError):
-            todo_db.update_todo(1)
+            todo_db.update_todo(1, is_done=True)
 
     def test_get_todo_list(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
@@ -179,6 +181,21 @@ class TestToDoDb:
 
         with pytest.raises(ValueError):
             todo_db.get_todo_list(1)
+
+    def test_user_object_name_id_name(self, db_session):
+        user = models.User(name="Test user")
+        db_session.add(user)
+        db_session.commit()
+
+        assert str(user) == '{0}. {1}'.format(1, "Test user")
+
+    def test_todo_object_name_is_id_todo_text(self, db_session):
+        todo = models.ToDo(text="Todo Text")
+        db_session.add(todo)
+        db_session.commit()
+
+        assert str(todo) == '{0}. {1}'.format(1, "Todo Text")
+
 
 
 # TestServerUtil class

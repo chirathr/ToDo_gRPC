@@ -75,7 +75,6 @@ class ToDoDb:
                 raise ValueError("ToDo not found")
             todo.is_done = True
             self.session.commit()
-            return True
         else:
             # Delete todo
             try:
@@ -85,9 +84,7 @@ class ToDoDb:
 
             self.session.delete(todo)
             self.session.commit()
-            return True
-            
-        return False
+        return True
 
     def get_todo_list(self, user_id):
         self.is_valid_id(user_id, 'user_id')
