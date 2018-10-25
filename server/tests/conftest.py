@@ -6,7 +6,7 @@ from server.models.models import dal, Base
 
 
 @pytest.fixture(scope='session')
-def session(self, request):
+def session(request):
     dal.conn_string = 'sqlite:///:memory:'
     dal.connect()
 
@@ -19,7 +19,7 @@ def session(self, request):
 
 
 @pytest.fixture(scope='function')
-def db_session(self, request, session):
+def db_session(request, session):
     session.query(models.User).delete()
     session.query(models.ToDo).delete()
     return session
