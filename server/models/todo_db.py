@@ -1,5 +1,4 @@
 from server.models.models import User, ToDo, dal
-from sqlalchemy import select
 from sqlalchemy.orm import exc
 
 
@@ -14,65 +13,112 @@ class ToDoDb:
             self.session = dal.session
 
     @staticmethod
-    def is_valid_id(int_id, name="id"):
-        if not (isinstance(int_id, int) and int_id > 0):
-            raise ValueError('{0} should be a valid int'.format(name))
+    def is_valid_id(int_id):
+        """Checks if id is a valid int
+
+        Args:
+            int_id(int): id that is to be validated
+
+        Returns:
+            bool: True if id is valid else false
+        """
+        return isinstance(int_id, int) and int_id > 0
 
     def get_user(self, name):
-        if not name.strip():
-            raise ValueError('Name cannot be empty')
+        """Gets a user from the database
 
-        select_user = select([User.id]).where(User.name == name)
+        Args:
+            name(str): The Name of the user
+
+        Returns:
+            return_value(dict): A dictionery with status and user(models.User)
+        """
+        return_value = {'status': False}
+        if not name.strip():
+            return return_value
+
         try:
-            user_id = self.session.query(select_user).one()[0]
+            return_value["user"] = self.session.query(User).filter(User.id).one()
+            return_value["status"] = True
         except exc.NoResultFound:
-            return None
+            return return_value
 
-        # Return the user id
-        return user_id
+        # Return the user
+        return return_value
 
-    def add_user_if_not_exist(self, name):
+    def add_user(self, name):
+        """Adds and returns the user.
+
+        Args:
+            name(str): The Name of the user
+        Returns:
+            return_value(dict): A dictionery with status and user(models.User)
+        """
+        return_value = {'status': False}
         if not name.strip():
-            raise ValueError('Name cannot be empty')
+            return return_value
 
         # Check user exists, then return the existing user
-        user_id = self.get_user(name)
-        if user_id is not None:
-            return user_id
+        user_dict = self.get_user(name)
+        if user_dict['status']:
+            return user_dict
 
         # Add user to db
         user = User(name=name)
         self.session.add(user)
         self.session.commit()
+        return_value['user'] = user
+        return_value['status'] = True
 
         # Get the new user
-        return user.id
+        return return_value
 
     def add_todo(self, user_id, text):
+        """Adds a user to the database if the user with `name` does not exist
+
+        Args:
+            user_id(int): user id of the user who added the ToDo
+            text(str): The ToDo text
+        Returns:
+            return_value(dict): A dictionery with status and todo(models.ToDo)
+        """
+        return_value = {'status': False}
         if not text.strip():
-            raise ValueError('Todo text cannot be empty')
+            return return_value
 
         # Get the user
         try:
             user = self.session.query(User).filter(User.id == user_id).one()
         except exc.NoResultFound:
-            raise ValueError("User not found")
+            return return_value
 
         # Add the todo
         todo = ToDo(text=text, user=user)
         self.session.add(todo)
         self.session.commit()
 
-        return todo.id
+        return_value['todo'] = todo
+        return_value['status'] = True
+
+        return return_value
 
     def update_todo(self, todo_id, is_done=False):
-        self.is_valid_id(todo_id, 'todo_id')
+        """Marks a todo as done, or deletes a todo
+
+        Args:
+            todo_id(int): Id of a todo
+            is_done(bool): True marks the todo as done, False deletes the todo
+        Returns:
+            bool: True if todo is deleted or mark todo as done is successful.
+        """
+        if not self.is_valid_id(todo_id):
+            return False
 
         if is_done:
             try:
                 todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
             except exc.NoResultFound:
-                raise ValueError("ToDo not found")
+                return False
             todo.is_done = True
             self.session.commit()
         else:
@@ -80,22 +126,33 @@ class ToDoDb:
             try:
                 todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
             except exc.NoResultFound:
-                raise ValueError("Todo not found")
+                return False
 
             self.session.delete(todo)
             self.session.commit()
         return True
 
     def get_todo_list(self, user_id):
-        self.is_valid_id(user_id, 'user_id')
+        """Returns a list of todo objects
+
+        Args:
+            user_id(int): id of the user whose todo list is to be fetched from the db
+        Returns:
+            return_value(dict): A dictionery with status and a list of todo(models.ToDo)
+        """
+        return_value = {'status': False}
+        if not self.is_valid_id(user_id):
+            return return_value
 
         # Get the user
         try:
             user = self.session.query(User).filter(User.id == user_id).one()
         except exc.NoResultFound:
-            raise ValueError("User not found")
+            return return_value
 
-        return self.session.query(ToDo).filter(ToDo.user == user).all()
+        return_value['todo_list'] = self.session.query(ToDo).filter(ToDo.user == user).all()
+        return_value['status'] = True
+        return return_value
 
     def __del__(self):
         self.session.close()
