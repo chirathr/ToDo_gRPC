@@ -3,6 +3,11 @@ from sqlalchemy.orm import exc
 
 
 class ToDoDb:
+    SUCCESS = 1
+    EXISTS = 2
+    FAILED = 3
+    DELETED = 4
+    MARKED_AS_DONE = 5
 
     def __init__(self, db_session=None):
         if db_session:
@@ -33,13 +38,13 @@ class ToDoDb:
         Returns:
             return_value(dict): A dictionery with status and user(models.User)
         """
-        return_value = {'status': False}
+        return_value = {'status': self.FAILED}
         if not name.strip():
             return return_value
 
         try:
             return_value["user"] = self.session.query(User).filter(User.id).one()
-            return_value["status"] = True
+            return_value["status"] = self.SUCCESS
         except exc.NoResultFound:
             return return_value
 
@@ -54,13 +59,14 @@ class ToDoDb:
         Returns:
             return_value(dict): A dictionery with status and user(models.User)
         """
-        return_value = {'status': False}
+        return_value = {'status': self.FAILED}
         if not name.strip():
             return return_value
 
         # Check user exists, then return the existing user
         user_dict = self.get_user(name)
-        if user_dict['status']:
+        if user_dict['status'] == self.SUCCESS:
+            user_dict['status'] == self.EXISTS
             return user_dict
 
         # Add user to db
@@ -68,7 +74,7 @@ class ToDoDb:
         self.session.add(user)
         self.session.commit()
         return_value['user'] = user
-        return_value['status'] = True
+        return_value['status'] = self.SUCCESS
 
         # Get the new user
         return return_value
@@ -82,7 +88,7 @@ class ToDoDb:
         Returns:
             return_value(dict): A dictionery with status and todo(models.ToDo)
         """
-        return_value = {'status': False}
+        return_value = {'status': self.FAILED}
         if not text.strip():
             return return_value
 
@@ -98,7 +104,7 @@ class ToDoDb:
         self.session.commit()
 
         return_value['todo'] = todo
-        return_value['status'] = True
+        return_value['status'] = self.SUCCESS
 
         return return_value
 
@@ -111,16 +117,18 @@ class ToDoDb:
         Returns:
             bool: True if todo is deleted or mark todo as done is successful.
         """
+        return_value = {'status': self.FAILED}
         if not self.is_valid_id(todo_id):
-            return False
+            return return_value
 
         if is_done:
             try:
                 todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
             except exc.NoResultFound:
-                return False
+                return return_value
             todo.is_done = True
             self.session.commit()
+            return_value['status'] = self.DELETED
         else:
             # Delete todo
             try:
@@ -130,7 +138,8 @@ class ToDoDb:
 
             self.session.delete(todo)
             self.session.commit()
-        return True
+            return_value['status'] = self.MARKED_AS_DONE
+        return return_value
 
     def get_todo_list(self, user_id):
         """Returns a list of todo objects
@@ -140,7 +149,7 @@ class ToDoDb:
         Returns:
             return_value(dict): A dictionery with status and a list of todo(models.ToDo)
         """
-        return_value = {'status': False}
+        return_value = {'status': self.FAILED}
         if not self.is_valid_id(user_id):
             return return_value
 
@@ -151,7 +160,7 @@ class ToDoDb:
             return return_value
 
         return_value['todo_list'] = self.session.query(ToDo).filter(ToDo.user == user).all()
-        return_value['status'] = True
+        return_value['status'] = self.SUCCESS
         return return_value
 
     def __del__(self):
