@@ -11,14 +11,15 @@ class TestServerUtils:
     todo_db = Mock(spec=ToDoDb())
 
     def test_add_user(self):
+        user_id = 1
         self.todo_db.add_user.return_value = {
             'status': True, 
-            'user': models.User(id=1)
+            'user': models.User(id=user_id)
             }
         server_utils = ServerUtils(todo_db=self.todo_db)
         user = server_utils.add_user(user=User(name="Test user"))
 
-        assert user.id == 1
+        assert user.id == user_id
         assert user.name == "Test user"
         assert user.status == SUCCESS
 
@@ -42,15 +43,16 @@ class TestServerUtils:
         assert user.status == FAILED
 
     def test_add_todo(self):
+        user_id = 1
         self.todo_db.add_todo.return_value = {
             'status': True,
-            'todo': models.ToDo(id=1)
+            'todo': models.ToDo(id=user_id)
         }
         server_utils = ServerUtils(todo_db=self.todo_db)
         todo = server_utils.add_todo(ToDo(text="Todo", user=User(id=1)))
 
         assert todo.status == SUCCESS
-        assert todo.id == 1
+        assert todo.id == user_id
 
     def test_add_todo_fails_without_text(self):
         server_utils = ServerUtils(todo_db=self.todo_db)

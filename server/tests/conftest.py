@@ -27,21 +27,21 @@ def db_session(request, session):
 
 class ServerTestHelper:
     @staticmethod
-    def add_user(db_session, name):
+    def mock_add_user(db_session, name):
         user = models.User(name=name)
         db_session.add(user)
         db_session.commit()
         return user
 
     @staticmethod
-    def get_user(db_session, user_id):
+    def mock_get_user(db_session, user_id):
         try:
             return db_session.query(models.User).filter(models.User.id == user_id).one()
         except exc.NoResultFound:
             return None
 
     @staticmethod
-    def add_todo(db_session, user_id, text):
+    def mock_add_todo(db_session, user_id, text):
         user = db_session.query(models.User).filter(models.User.id == user_id).one()
         todo = models.ToDo(user=user, text=text)
         db_session.add(todo)
@@ -49,13 +49,17 @@ class ServerTestHelper:
         return todo
 
     @staticmethod
-    def get_todo(db_session, todo_id):
+    def mock_get_todo(db_session, todo_id):
         try:
             return db_session.query(models.ToDo).filter(models.ToDo.id == todo_id).one()
         except exc.NoResultFound:
             return None
 
     @staticmethod
-    def get_todo_list(db_session, user_id):
+    def mock_get_todo_list(db_session, user_id):
         user = db_session.query(models.User).filter(models.User.id == user_id).one()
         return db_session.query(models.ToDo).filter(models.ToDo.user == user).all()
+
+    @staticmethod
+    def mock_get_user_list(db_session):
+        return db_session.query(models.User).all()

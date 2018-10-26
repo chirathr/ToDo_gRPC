@@ -13,7 +13,7 @@ class TestToDoDb:
 
     def test_get_user(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        expected_user = self.helper.add_user(db_session, "Test user")
+        expected_user = self.helper.mock_add_user(db_session, "Test user")
 
         user_dict = todo_db.get_user("Test user")
         actual_user = user_dict['user']
@@ -36,7 +36,7 @@ class TestToDoDb:
         todo_db = ToDoDb(db_session=db_session)
         user_dict = todo_db.add_user("Test user")
         actual_user = user_dict['user']
-        expected_user = self.helper.get_user(db_session, 1)
+        expected_user = self.helper.mock_get_user_list(db_session)[0]
 
         assert user_dict['status'] == True
         assert actual_user.id == expected_user.id
@@ -44,7 +44,7 @@ class TestToDoDb:
 
     def test_add_user_if_exists(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        expected_user = self.helper.add_user(db_session, "Test user")
+        expected_user = self.helper.mock_add_user(db_session, "Test user")
 
         user_dict = todo_db.add_user("Test user")
         actual_user = user_dict['user']
@@ -60,9 +60,9 @@ class TestToDoDb:
 
     def test_add_todo(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        user = self.helper.add_user(db_session, "Test user")
+        user = self.helper.mock_add_user(db_session, "Test user")
         todo_dict = todo_db.add_todo(user.id, "Test todo")
-        expected_todo = self.helper.get_todo(db_session, 1)
+        expected_todo = self.helper.mock_get_todo_list(db_session, user.id)[0]
         actual_todo = todo_dict['todo']
 
         assert todo_dict['status'] == True
@@ -83,11 +83,11 @@ class TestToDoDb:
 
     def test_update_todo_is_done(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        user = self.helper.add_user(db_session, "Test user")
-        todo = self.helper.add_todo(db_session, user.id, "Test Todo")
+        user = self.helper.mock_add_user(db_session, "Test user")
+        todo = self.helper.mock_add_todo(db_session, user.id, "Test Todo")
 
         assert todo_db.update_todo(todo.id, is_done=True) == True
-        assert self.helper.get_todo(db_session, todo.id).is_done == True
+        assert self.helper.mock_get_todo(db_session, todo.id).is_done == True
 
     def test_update_todo_is_done_raises_value_error(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
@@ -96,11 +96,11 @@ class TestToDoDb:
 
     def test_update_todo_delete(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        user = self.helper.add_user(db_session, "Test user")
-        todo = self.helper.add_todo(db_session, user.id, "Test Todo")
+        user = self.helper.mock_add_user(db_session, "Test user")
+        todo = self.helper.mock_add_todo(db_session, user.id, "Test Todo")
 
         assert todo_db.update_todo(todo.id) == True
-        assert self.helper.get_todo(db_session, todo.id) == None
+        assert self.helper.mock_get_todo(db_session, todo.id) == None
 
     def test_update_todo_not_found_raises_exception(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
@@ -110,11 +110,11 @@ class TestToDoDb:
 
     def test_get_todo_list(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        user = self.helper.add_user(db_session, "Test user")
-        self.helper.add_todo(db_session, user.id, "Test Todo 1")
-        self.helper.add_todo(db_session, user.id, "Test Todo 2")
+        user = self.helper.mock_add_user(db_session, "Test user")
+        self.helper.mock_add_todo(db_session, user.id, "Test Todo 1")
+        self.helper.mock_add_todo(db_session, user.id, "Test Todo 2")
 
-        expected_todo_list = self.helper.get_todo_list(db_session, user.id)
+        expected_todo_list = self.helper.mock_get_todo_list(db_session, user.id)
         todo_list_dict = todo_db.get_todo_list(user.id)
         actual_todo_list = todo_list_dict['todo_list']
 
