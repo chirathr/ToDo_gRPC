@@ -1,9 +1,4 @@
-import pytest
-
 from server.models.todo_db import ToDoDb
-from server.models import models
-from sqlalchemy.orm import scoped_session, exc
-from server.models.models import dal, Base
 from server.tests.conftest import ServerTestHelper
 
 
@@ -86,27 +81,24 @@ class TestToDoDb:
         user = self.helper.mock_add_user(db_session, "Test user")
         todo = self.helper.mock_add_todo(db_session, user.id, "Test Todo")
 
-        assert todo_db.update_todo(todo.id, is_done=True) == True
-        assert self.helper.mock_get_todo(db_session, todo.id).is_done == True
+        assert todo_db.update_todo(todo.id, is_done=True) is True
+        assert self.helper.mock_get_todo(db_session, todo.id).is_done is True
 
-    def test_update_todo_is_done_raises_value_error(self, db_session):
+    def test_update_todo_fails_on_invalid_todo_id_input(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        assert todo_db.update_todo(-1, is_done=True) == False
-        assert todo_db.update_todo(1) == False
+
+        # Mark todo as done
+        assert todo_db.update_todo(-1, is_done=True) is False
+        # Delete todo
+        assert todo_db.update_todo(1) is False
 
     def test_update_todo_delete(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
         user = self.helper.mock_add_user(db_session, "Test user")
         todo = self.helper.mock_add_todo(db_session, user.id, "Test Todo")
 
-        assert todo_db.update_todo(todo.id) == True
-        assert self.helper.mock_get_todo(db_session, todo.id) == None
-
-    def test_update_todo_not_found_raises_exception(self, db_session):
-        todo_db = ToDoDb(db_session=db_session)
-
-        assert todo_db.update_todo(1) == False
-        assert todo_db.update_todo(1, is_done=True) == False
+        assert todo_db.update_todo(todo.id) is True
+        assert self.helper.mock_get_todo(db_session, todo.id) is None
 
     def test_get_todo_list(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
@@ -127,17 +119,3 @@ class TestToDoDb:
         todo_db = ToDoDb(db_session=db_session)
 
         assert todo_db.get_todo_list(1)['status'] == False
-
-    def test_user_object_name_id_name(self, db_session):
-        user = models.User(name="Test user")
-        db_session.add(user)
-        db_session.commit()
-
-        assert str(user) == '{0}. {1}'.format(1, "Test user")
-
-    def test_todo_object_name_is_id_todo_text(self, db_session):
-        todo = models.ToDo(text="Todo Text")
-        db_session.add(todo)
-        db_session.commit()
-
-        assert str(todo) == '{0}. {1}'.format(1, "Todo Text")

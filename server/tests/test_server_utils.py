@@ -13,7 +13,7 @@ class TestServerUtils:
     def test_add_user(self):
         user_id = 1
         self.todo_db.add_user.return_value = {
-            'status': True, 
+            'status': True,
             'user': models.User(id=user_id)
             }
         server_utils = ServerUtils(todo_db=self.todo_db)
@@ -138,7 +138,7 @@ class TestServerUtils:
             todo_list.append(todo)
 
         self.todo_db.get_todo_list.return_value = {
-            'todo_list': todo_list_data, 
+            'todo_list': todo_list_data,
             'status': True
         }
         server_utils = ServerUtils(todo_db=self.todo_db)
