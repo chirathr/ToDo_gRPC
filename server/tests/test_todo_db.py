@@ -89,6 +89,7 @@ class TestToDoDb:
 
         # Mark todo as done
         assert todo_db.update_todo(-1, is_done=True)['status'] == ToDoDb.FAILED
+        assert todo_db.update_todo(1, is_done=True)['status'] == ToDoDb.FAILED
         # Delete todo
         assert todo_db.update_todo(1)['status'] == ToDoDb.FAILED
 
@@ -99,6 +100,12 @@ class TestToDoDb:
 
         assert todo_db.update_todo(todo.id)['status'] == ToDoDb.DELETED
         assert self.helper.mock_get_todo(db_session, todo.id) is None
+    
+    def test_get_todo_list_fails_on_invalid_user_id(self, db_session):
+        todo_db = ToDoDb(db_session=db_session)
+
+        assert todo_db.get_todo_list(-1)['status'] == ToDoDb.FAILED
+        assert todo_db.get_todo_list(1)['status'] == ToDoDb.FAILED
 
     def test_get_todo_list(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
@@ -114,8 +121,3 @@ class TestToDoDb:
         for i in range(len(expected_todo_list)):
             assert expected_todo_list[i].id == actual_todo_list[i].id
             assert expected_todo_list[i].text == actual_todo_list[i].text
-
-    def test_get_todo_list_user_not_found_raises_exception(self, db_session):
-        todo_db = ToDoDb(db_session=db_session)
-
-        assert todo_db.get_todo_list(1)['status'] == ToDoDb.FAILED
