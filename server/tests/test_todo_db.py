@@ -72,8 +72,8 @@ class TestToDoDb:
 
     def test_add_todo_invalid_user_id(self, db_session):
         todo_db = ToDoDb(db_session=db_session)
-        assert todo_db.add_todo(None, "")['status'] == ToDoDb.FAILED
-        assert todo_db.add_todo(-1, "")['status'] == ToDoDb.FAILED
+        assert todo_db.add_todo(None, "Todo 1")['status'] == ToDoDb.FAILED
+        assert todo_db.add_todo(-1, "Todo 1")['status'] == ToDoDb.FAILED
         assert todo_db.add_todo(10, "Todo 1")['status'] == ToDoDb.FAILED
 
     def test_update_todo_is_done(self, db_session):

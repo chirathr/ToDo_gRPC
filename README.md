@@ -28,6 +28,16 @@ Then run the client script in a new terminal.
 python client.py
 ```
 
+### Testing
+
+All the core modules have unit tests. To run all tests use the command:
+
+```bash
+pytest -v
+```
+
+This will also create covrage html report and save it in the `htmlcov` file.
+
 #### Screenshots
 
 ![ToDo](images/todo.png)
