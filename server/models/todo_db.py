@@ -128,17 +128,17 @@ class ToDoDb:
                 return return_value
             todo.is_done = True
             self.session.commit()
-            return_value['status'] = self.DELETED
+            return_value['status'] = self.MARKED_AS_DONE
         else:
             # Delete todo
             try:
                 todo = self.session.query(ToDo).filter(ToDo.id == todo_id).one()
             except exc.NoResultFound:
-                return False
+                return return_value
 
             self.session.delete(todo)
             self.session.commit()
-            return_value['status'] = self.MARKED_AS_DONE
+            return_value['status'] = self.DELETED
         return return_value
 
     def get_todo_list(self, user_id):

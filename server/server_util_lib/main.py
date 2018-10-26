@@ -28,7 +28,7 @@ class ServerUtils:
 
     def update_todo(self, todo):
         if isinstance(todo, ToDo) and todo.id > 0:
-            if self.todo_db.update_todo(todo.id, todo.is_done) in (ToDoDb.DELETED, ToDoDb.MARKED_AS_DONE):
+            if self.todo_db.update_todo(todo.id, todo.is_done)['status'] in (ToDoDb.DELETED, ToDoDb.MARKED_AS_DONE):
                 todo.status = todo_pb2.SUCCESS
                 return todo
         return ToDo(status=todo_pb2.FAILED)
