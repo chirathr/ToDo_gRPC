@@ -11,7 +11,10 @@ class TestServerUtils:
     todo_db = Mock(spec=ToDoDb())
 
     def test_add_user(self):
-        self.todo_db.add_user_if_not_exist.return_value = 1
+        self.todo_db.add_user.return_value = {
+            'status': True, 
+            'user': models.User(id=1)
+            }
         server_utils = ServerUtils(todo_db=self.todo_db)
         user = server_utils.add_user(user=User(name="Test user"))
 
@@ -20,7 +23,7 @@ class TestServerUtils:
         assert user.status == SUCCESS
 
     def test_add_user_fails(self):
-        self.todo_db.add_user_if_not_exist.return_value = 0
+        self.todo_db.add_user.return_value = {'status': False}
         server_utils = ServerUtils(todo_db=self.todo_db)
         user = server_utils.add_user(User(name="Test user"))
 
@@ -39,9 +42,11 @@ class TestServerUtils:
         assert user.status == FAILED
 
     def test_add_todo(self):
-        self.todo_db.add_todo.return_value = 1
+        self.todo_db.add_todo.return_value = {
+            'status': True,
+            'todo': models.ToDo(id=1)
+        }
         server_utils = ServerUtils(todo_db=self.todo_db)
-
         todo = server_utils.add_todo(ToDo(text="Todo", user=User(id=1)))
 
         assert todo.status == SUCCESS
@@ -74,8 +79,8 @@ class TestServerUtils:
         todo = server_utils.add_todo("")
         assert todo.status == FAILED
 
-    def test_add_todo_fails_on_value_error_from_db(self):
-        self.todo_db.add_todo.side_effect = ValueError()
+    def test_add_todo_fails_on_db_failed_status(self):
+        self.todo_db.add_todo.return_value = {'status': False}
         server_utils = ServerUtils(todo_db=self.todo_db)
 
         todo = server_utils.add_todo(ToDo(text="Todo", user=User(id=1)))
@@ -95,8 +100,8 @@ class TestServerUtils:
         todo = server_utils.update_todo(ToDo(id=1, is_done=True))
         assert todo.status == SUCCESS
 
-    def test_update_todo_fails_on_value_error(self):
-        self.todo_db.update_todo.side_effect = ValueError
+    def test_update_todo_fails_on_db_failed_status(self):
+        self.todo_db.update_todo.return_value = False
         server_utils = ServerUtils(todo_db=self.todo_db)
 
         todo = server_utils.update_todo(ToDo(id=1, is_done=True))
@@ -130,13 +135,15 @@ class TestServerUtils:
             )
             todo_list.append(todo)
 
-        self.todo_db.get_todo_list.return_value = todo_list_data
+        self.todo_db.get_todo_list.return_value = {
+            'todo_list': todo_list_data, 
+            'status': True
+        }
         server_utils = ServerUtils(todo_db=self.todo_db)
-
         assert server_utils.get_todo_list(User(id=1)) == todo_list
 
-    def test_todo_list_value_error(self):
-        self.todo_db.get_todo_list.side_effect = ValueError
+    def test_todo_list_db_failed_status(self):
+        self.todo_db.get_todo_list.return_value = {'status': False}
         server_utils = ServerUtils(todo_db=self.todo_db)
         todo_list = server_utils.get_todo_list(User(id=1))
 

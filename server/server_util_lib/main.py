@@ -18,10 +18,7 @@ class ServerUtils:
 
     def add_todo(self, todo):
         if isinstance(todo, ToDo) and todo.text and todo.user.id != 0:
-            try:
-                todo_dict = self.todo_db.add_todo(todo.user.id, todo.text)
-            except ValueError:
-                return ToDo(status=FAILED)
+            todo_dict = self.todo_db.add_todo(todo.user.id, todo.text)
             if todo_dict['status']:
                 todo.status = SUCCESS
                 todo.id = todo_dict['todo'].id
